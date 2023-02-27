@@ -35,5 +35,6 @@ func init() {
 	rootCmd.AddCommand(localCmd)
 	localCmd.Flags().StringVarP(&config.Host, "host", "", "", "Server host (default is \"\")")
 	localCmd.Flags().IntVarP(&config.Port, "port", "p", 0, "Listen on port (default is random)")
+	localCmd.Flags().BoolVarP(&config.CORS, "cors", "c", false, "Enable CORS (default is false)")
 	localCmd.Flags().BoolVarP(&config.Launch, "launch", "l", false, "Launch default browser")
 }

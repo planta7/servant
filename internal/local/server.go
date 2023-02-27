@@ -18,6 +18,7 @@ type Configuration struct {
 	Path   string
 	Host   string
 	Port   int
+	CORS   bool
 	Launch bool
 }
 
@@ -32,7 +33,7 @@ func NewServer(config Configuration) *Server {
 func (s *Server) Start() {
 	fullAddress := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
 	mux := http.NewServeMux()
-	mux.Handle("/", s.logRequest(http.FileServer(http.Dir(s.config.Path))))
+	mux.Handle("/", s.handleRequest(http.FileServer(http.Dir(s.config.Path))))
 
 	listener, err := net.Listen("tcp", fullAddress)
 	if err != nil {
@@ -45,7 +46,7 @@ func (s *Server) Start() {
 		Addr:    fullAddress,
 		Handler: mux,
 	}
-	go s.start(server, listener, s.config)
+	go s.start(server, listener)
 
 	stopCh, closeCh := s.createChannel()
 	defer closeCh()
@@ -62,9 +63,13 @@ func (s *Server) getContentLength(header http.Header) string {
 	return ""
 }
 
-func (s *Server) logRequest(h http.Handler) http.Handler {
+func (s *Server) handleRequest(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lrw := network.NewLoggingResponseWriter(w)
+		if s.config.CORS {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "*")
+		}
 		h.ServeHTTP(lrw, r)
 		contentLengthHeader := s.getContentLength(w.Header())
 		logLine := fmt.Sprintf("%s\t%d\t%s\t%s %s", r.RemoteAddr, lrw.StatusCode, r.Method, r.RequestURI, contentLengthHeader)
@@ -72,16 +77,16 @@ func (s *Server) logRequest(h http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) getListenerHost(listener net.Listener, config Configuration) string {
-	resolvedPort := config.Port
-	if config.Port == 0 {
+func (s *Server) getListenerHost(listener net.Listener) string {
+	resolvedPort := s.config.Port
+	if s.config.Port == 0 {
 		resolvedPort = listener.Addr().(*net.TCPAddr).Port
 	}
-	if config.Host == "" {
+	if s.config.Host == "" {
 		localIP, _ := network.LocalIP()
 		return fmt.Sprintf("http://127.0.0.1:%d and http://%s:%d", resolvedPort, localIP.String(), resolvedPort)
 	}
-	return fmt.Sprintf("http://%s:%d", config.Host, resolvedPort)
+	return fmt.Sprintf("http://%s:%d", s.config.Host, resolvedPort)
 }
 
 func (s *Server) createChannel() (chan os.Signal, func()) {
@@ -93,9 +98,9 @@ func (s *Server) createChannel() (chan os.Signal, func()) {
 	}
 }
 
-func (s *Server) start(server *http.Server, listener net.Listener, config Configuration) {
-	hostValue := s.getListenerHost(listener, config)
-	log.Info(fmt.Sprintf("Serving %s at %s", config.Path, hostValue))
+func (s *Server) start(server *http.Server, listener net.Listener) {
+	hostValue := s.getListenerHost(listener)
+	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, hostValue))
 	err := server.Serve(listener)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Debug("Server closed")
