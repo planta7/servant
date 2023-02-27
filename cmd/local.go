@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/charmbracelet/log"
+	"github.com/spf13/pflag"
 	"serve/internal/local"
 
 	"github.com/spf13/cobra"
@@ -15,7 +17,12 @@ var localCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		config.Path = "./"
-		log.Debug("Arguments", "args", args)
+
+		var parsedFlags []string
+		cmd.Flags().Visit(func(f *pflag.Flag) {
+			parsedFlags = append(parsedFlags, fmt.Sprintf("%s:%s", f.Name, f.Value.String()))
+		})
+		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 		if len(args) > 0 {
 			config.Path = args[0]
 		}
