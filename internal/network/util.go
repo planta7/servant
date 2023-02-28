@@ -6,6 +6,12 @@ import (
 	"net/http"
 )
 
+const (
+	ContentLength             = "Content-Length"
+	AccessControlAllowOrigin  = "Access-Control-Allow-Origin"
+	AccessControlAllowMethods = "Access-Control-Allow-Methods"
+)
+
 type LoggingResponseWriter struct {
 	http.ResponseWriter
 	StatusCode int
@@ -20,7 +26,6 @@ func (lrw *LoggingResponseWriter) WriteHeader(code int) {
 	lrw.ResponseWriter.WriteHeader(code)
 }
 
-// LocalIP get the host machine local IP address
 func LocalIP() (net.IP, error) {
 	interfaces, err := net.Interfaces()
 	if err != nil {

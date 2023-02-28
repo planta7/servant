@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"serve/internal"
 	"serve/internal/network"
 	"syscall"
 	"time"
@@ -56,7 +57,7 @@ func (s *Server) Start() {
 }
 
 func (s *Server) getContentLength(header http.Header) string {
-	value := header.Get("Content-Length")
+	value := header.Get(network.ContentLength)
 	if value != "" {
 		return fmt.Sprintf("(%s)", value)
 	}
@@ -67,12 +68,13 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lrw := network.NewLoggingResponseWriter(w)
 		if s.config.CORS {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "*")
+			w.Header().Set(network.AccessControlAllowOrigin, "*")
+			w.Header().Set(network.AccessControlAllowMethods, "*")
 		}
 		h.ServeHTTP(lrw, r)
 		contentLengthHeader := s.getContentLength(w.Header())
-		logLine := fmt.Sprintf("%s\t%d\t%s\t%s %s", r.RemoteAddr, lrw.StatusCode, r.Method, r.RequestURI, contentLengthHeader)
+		statusStyle := internal.GetStyle(lrw.StatusCode)
+		logLine := fmt.Sprintf("%s\t%s\t%s\t%s %s", r.RemoteAddr, statusStyle, r.Method, r.RequestURI, contentLengthHeader)
 		log.Info(logLine)
 	})
 }

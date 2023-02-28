@@ -23,8 +23,12 @@ var localCmd = &cobra.Command{
 			parsedFlags = append(parsedFlags, fmt.Sprintf("%s:%s", f.Name, f.Value.String()))
 		})
 		log.Debug("Parameters", "args", args, "flags", parsedFlags)
+
 		if len(args) > 0 {
 			config.Path = args[0]
+		}
+		if config.Launch {
+			local.LaunchBrowser("http://localhost:8080") // TODO
 		}
 		server := local.NewServer(*config)
 		server.Start()
