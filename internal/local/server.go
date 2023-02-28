@@ -81,7 +81,12 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue))
 
 	if s.config.Launch {
-		internal.LaunchBrowser(s.values.getDefault())
+		url := s.values.getDefault()
+		log.Debug("Launching default browser", "url", url)
+		err := internal.LaunchBrowser(url)
+		if err != nil {
+			log.Warn("Invalid URL", "url", url)
+		}
 	}
 
 	err := server.Serve(listener)

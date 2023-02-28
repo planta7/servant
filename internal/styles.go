@@ -21,7 +21,7 @@ var (
 			Light: "203",
 			Dark:  "204",
 		})
-	DefaultColor = lipgloss.NewStyle().
+	DefaultStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.NoColor{})
 )
 
@@ -35,7 +35,7 @@ func GetStyle(statusCode int) lipgloss.Style {
 	case 5:
 		return _5Family.SetString(statusString)
 	default:
-		return DefaultColor.SetString(statusString)
+		return DefaultStyle.SetString(statusString)
 
 	}
 }

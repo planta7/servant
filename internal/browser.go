@@ -2,24 +2,25 @@ package internal
 
 import (
 	"fmt"
-	"github.com/charmbracelet/log"
+	"net/url"
 	"os/exec"
 	"runtime"
 )
 
-func LaunchBrowser(url string) {
-	var err error
+func LaunchBrowser(serverUrl string) error {
+	_, err := url.ParseRequestURI(serverUrl)
+	if err != nil {
+		return err
+	}
 	switch runtime.GOOS {
 	case "linux":
-		err = exec.Command("xdg-open", url).Start()
+		err = exec.Command("xdg-open", serverUrl).Start()
 	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", serverUrl).Start()
 	case "darwin":
-		err = exec.Command("open", url).Start()
+		err = exec.Command("open", serverUrl).Start()
 	default:
 		err = fmt.Errorf("unsupported platform")
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 }
