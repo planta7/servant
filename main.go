@@ -1,11 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/charmbracelet/log"
 	"serve/cmd"
 )
 
+var (
+	version string
+	commit  string
+)
+
 func main() {
-	log.Info("serve v0.1") // TODO: get version
+	log.Info(fmt.Sprintf("serve %s (%s)", version, commit))
 	cmd.Execute()
 }

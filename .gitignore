@@ -1,3 +1,4 @@
 .idea
 serve
 .DS_Store
+dist/
