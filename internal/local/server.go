@@ -28,6 +28,10 @@ type serverValues struct {
 	hosts []string
 }
 
+func (v *serverValues) getDefault() string {
+	return fmt.Sprintf("http://%s", v.hosts[len(v.hosts)-1]) // TODO: protocol
+}
+
 type Server struct {
 	config Configuration
 	values serverValues
@@ -75,6 +79,11 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 	s.resolveServerValues(listener)
 	listenersValue := s.getListenersValue()
 	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue))
+
+	if s.config.Launch {
+		internal.LaunchBrowser(s.values.getDefault())
+	}
+
 	err := server.Serve(listener)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Debug("Server closed")
@@ -114,7 +123,7 @@ func (s *Server) resolveServerValues(listener net.Listener) {
 func (s *Server) getListenersValue() string {
 	var listeners []string
 	for _, h := range s.values.hosts {
-		listeners = append(listeners, fmt.Sprintf("http://%s", h)) // TODO: add protocol
+		listeners = append(listeners, fmt.Sprintf("http://%s", h)) // TODO: protocol
 	}
 	return strings.Join(listeners, ", ")
 }

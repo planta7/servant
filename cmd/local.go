@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/spf13/pflag"
-	"serve/internal"
 	"serve/internal/local"
 
 	"github.com/spf13/cobra"
@@ -27,9 +26,6 @@ var localCmd = &cobra.Command{
 
 		if len(args) > 0 {
 			config.Path = args[0]
-		}
-		if config.Launch {
-			internal.LaunchBrowser("http://localhost:8080") // TODO
 		}
 		server := local.NewServer(*config)
 		server.Start()
