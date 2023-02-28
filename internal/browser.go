@@ -12,6 +12,9 @@ func LaunchBrowser(serverUrl string) error {
 	if err != nil {
 		return err
 	}
+	if IsTestRun() { // :|
+		return nil
+	}
 	switch runtime.GOOS {
 	case "linux":
 		err = exec.Command("xdg-open", serverUrl).Start()

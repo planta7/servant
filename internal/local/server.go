@@ -138,7 +138,7 @@ func (s *Server) resolveServerValues(listener net.Listener) {
 	} else {
 		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", s.config.Host, resolvedPort))
 	}
-	var resolvedSchema string
+	resolvedSchema := "http"
 	if s.config.WantsTLS() {
 		resolvedSchema = "https"
 	}
