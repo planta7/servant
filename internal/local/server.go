@@ -146,7 +146,12 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 		h.ServeHTTP(lrw, r)
 		contentLengthHeader := s.getContentLength(w.Header())
 		statusStyle := internal.GetStyle(lrw.StatusCode)
-		logLine := fmt.Sprintf("%s\t%s\t%s\t%s %s", r.RemoteAddr, statusStyle, r.Method, r.RequestURI, contentLengthHeader)
+		logLine := fmt.Sprintf("%s\t%s\t%s\t%s %s",
+			r.RemoteAddr,
+			statusStyle,
+			r.Method,
+			r.RequestURI,
+			contentLengthHeader)
 		log.Info(logLine)
 	})
 }
