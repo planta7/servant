@@ -19,17 +19,28 @@ import (
 type Configuration struct {
 	Path   string
 	Host   string
+	TLS    TLSConfiguration
 	Port   int
 	CORS   bool
 	Launch bool
 }
 
+func (c *Configuration) WantsTLS() bool {
+	return c.TLS.CertFile != "" && c.TLS.KeyFile != ""
+}
+
+type TLSConfiguration struct {
+	CertFile string
+	KeyFile  string
+}
+
 type serverValues struct {
-	hosts []string
+	hosts  []string
+	schema string
 }
 
 func (v *serverValues) getDefault() string {
-	return fmt.Sprintf("http://%s", v.hosts[len(v.hosts)-1]) // TODO: protocol
+	return fmt.Sprintf("%s://%s", v.schema, v.hosts[len(v.hosts)-1])
 }
 
 type Server struct {
@@ -89,7 +100,13 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 		}
 	}
 
-	err := server.Serve(listener)
+	var err error
+	if s.config.WantsTLS() {
+		err = server.ServeTLS(listener, s.config.TLS.CertFile, s.config.TLS.KeyFile)
+	} else {
+		err = server.Serve(listener)
+	}
+
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Debug("Server closed")
 	} else if err != nil {
@@ -121,14 +138,17 @@ func (s *Server) resolveServerValues(listener net.Listener) {
 	} else {
 		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", s.config.Host, resolvedPort))
 	}
-	s.values = serverValues{hosts: resolvedHosts}
+	var resolvedSchema string
+	if s.config.WantsTLS() {
+		resolvedSchema = "https"
+	}
+	s.values = serverValues{hosts: resolvedHosts, schema: resolvedSchema}
 }
 
-// TODO move?
 func (s *Server) getListenersValue() string {
 	var listeners []string
 	for _, h := range s.values.hosts {
-		listeners = append(listeners, fmt.Sprintf("http://%s", h)) // TODO: protocol
+		listeners = append(listeners, fmt.Sprintf("%s://%s", s.values.schema, h))
 	}
 	return strings.Join(listeners, ", ")
 }

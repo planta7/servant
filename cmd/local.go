@@ -38,4 +38,7 @@ func init() {
 	localCmd.Flags().IntVarP(&config.Port, "port", "p", 0, "Listen on port (default is random)")
 	localCmd.Flags().BoolVarP(&config.CORS, "cors", "c", false, "Enable CORS (default is false)")
 	localCmd.Flags().BoolVarP(&config.Launch, "launch", "l", false, "Launch default browser")
+	localCmd.Flags().StringVarP(&config.TLS.CertFile, "certFile", "", "", "Path to certificate")
+	localCmd.Flags().StringVarP(&config.TLS.KeyFile, "keyFile", "", "", "Path to key")
+	localCmd.MarkFlagsRequiredTogether("certFile", "keyFile")
 }
