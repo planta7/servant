@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"serve/internal"
 	"serve/internal/network"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -23,8 +24,13 @@ type Configuration struct {
 	Launch bool
 }
 
+type serverValues struct {
+	hosts []string
+}
+
 type Server struct {
 	config Configuration
+	values serverValues
 }
 
 func NewServer(config Configuration) *Server {
@@ -56,6 +62,63 @@ func (s *Server) Start() {
 	s.shutdown(context.Background(), server)
 }
 
+func (s *Server) createChannel() (chan os.Signal, func()) {
+	stopCh := make(chan os.Signal, 1)
+	signal.Notify(stopCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+
+	return stopCh, func() {
+		close(stopCh)
+	}
+}
+
+func (s *Server) start(server *http.Server, listener net.Listener) {
+	s.resolveServerValues(listener)
+	listenersValue := s.getListenersValue()
+	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue))
+	err := server.Serve(listener)
+	if errors.Is(err, http.ErrServerClosed) {
+		log.Debug("Server closed")
+	} else if err != nil {
+		log.Fatal("Error listening for server", "err", err)
+	}
+}
+
+func (s *Server) shutdown(ctx context.Context, server *http.Server) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		panic(err)
+	} else {
+		log.Debug("Shutdown completed")
+	}
+}
+
+func (s *Server) resolveServerValues(listener net.Listener) {
+	resolvedPort := s.config.Port
+	if s.config.Port == 0 {
+		resolvedPort = listener.Addr().(*net.TCPAddr).Port
+	}
+	var resolvedHosts []string
+	if s.config.Host == "" {
+		localIP, _ := network.LocalIP()
+		resolvedHosts = append(resolvedHosts, fmt.Sprintf("127.0.0.1:%d", resolvedPort))
+		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", localIP.String(), resolvedPort))
+	} else {
+		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", s.config.Host, resolvedPort))
+	}
+	s.values = serverValues{hosts: resolvedHosts}
+}
+
+// TODO move?
+func (s *Server) getListenersValue() string {
+	var listeners []string
+	for _, h := range s.values.hosts {
+		listeners = append(listeners, fmt.Sprintf("http://%s", h)) // TODO: add protocol
+	}
+	return strings.Join(listeners, ", ")
+}
+
 func (s *Server) getContentLength(header http.Header) string {
 	value := header.Get(network.ContentLength)
 	if value != "" {
@@ -77,47 +140,4 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 		logLine := fmt.Sprintf("%s\t%s\t%s\t%s %s", r.RemoteAddr, statusStyle, r.Method, r.RequestURI, contentLengthHeader)
 		log.Info(logLine)
 	})
-}
-
-func (s *Server) getListenerHost(listener net.Listener) string {
-	resolvedPort := s.config.Port
-	if s.config.Port == 0 {
-		resolvedPort = listener.Addr().(*net.TCPAddr).Port
-	}
-	if s.config.Host == "" {
-		localIP, _ := network.LocalIP()
-		return fmt.Sprintf("http://127.0.0.1:%d and http://%s:%d", resolvedPort, localIP.String(), resolvedPort)
-	}
-	return fmt.Sprintf("http://%s:%d", s.config.Host, resolvedPort)
-}
-
-func (s *Server) createChannel() (chan os.Signal, func()) {
-	stopCh := make(chan os.Signal, 1)
-	signal.Notify(stopCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-
-	return stopCh, func() {
-		close(stopCh)
-	}
-}
-
-func (s *Server) start(server *http.Server, listener net.Listener) {
-	hostValue := s.getListenerHost(listener)
-	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, hostValue))
-	err := server.Serve(listener)
-	if errors.Is(err, http.ErrServerClosed) {
-		log.Debug("Server closed")
-	} else if err != nil {
-		log.Fatal("Error listening for server", "err", err)
-	}
-}
-
-func (s *Server) shutdown(ctx context.Context, server *http.Server) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(ctx); err != nil {
-		panic(err)
-	} else {
-		log.Debug("Shutdown completed")
-	}
 }
