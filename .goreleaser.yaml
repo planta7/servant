@@ -35,7 +35,7 @@ brews:
   - name: serve
     tap:
       owner: planta7
-      name: homebrew-serve
+      name: homebrew-tap
     url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: goreleaserbot
