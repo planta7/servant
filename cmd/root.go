@@ -1,19 +1,27 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
+	"strings"
 )
 
 var cfgFile string
 var verbose bool
 
+const (
+	EnvPrefix = "SERVE"
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Create an HTTP server in a jiffy",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		bindFlags(cmd)
 		if verbose {
 			log.SetLevel(log.DebugLevel)
 			log.SetReportCaller(true)
@@ -31,7 +39,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./serve.yaml and $HOME/.serve.yaml)")
-	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "verbose mode (default is false)")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode (default is false)")
 }
 
 func initConfig() {
@@ -47,9 +55,20 @@ func initConfig() {
 		viper.SetConfigName(".serve")
 	}
 
+	viper.SetEnvPrefix(EnvPrefix)
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
 		log.Info("Using config file", "config", viper.ConfigFileUsed())
 	}
+}
+
+func bindFlags(cmd *cobra.Command) {
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		if !f.Changed && viper.IsSet(f.Name) {
+			val := viper.Get(f.Name)
+			_ = cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+		}
+	})
 }

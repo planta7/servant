@@ -1,0 +1,7 @@
+verbose: true
+host: 192.168.3.12
+port: 8080
+cors: false
+launch: true
+certFile: /path/to/certFile
+keyFile: /path/to/keyFile
