@@ -46,3 +46,21 @@ brews:
     license: "MIT"
     install: |
       bin.install "serve"
+chocolateys:
+  - name: serve
+    authors: Roberto García
+    project_url: https://github.com/planta7/serve
+    url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    icon_url: https://github.com/planta7/serve/blob/main/assets/logo.png
+    copyright: 2023 Roberto García
+    license_url: https://github.com/planta7/serve/blob/main/LICENSE
+    project_source_url: https://github.com/planta7/serve
+    docs_url: https://github.com/planta7/serve/blob/main/README.md
+    bug_tracker_url: https://github.com/planta7/serve/issues
+    tags: "cli golang local http-server development-tools"
+    summary: Create a local server from any location on your computer
+    description: |
+      {{ .ProjectName }} installer package.
+      `serve` allows you to easily expose any content on your computer through a local web server.
+    release_notes: "https://github.com/planta7/serve/releases/tag/v{{ .Version }}"
+    api_key: '{{ .Env.CHOCOLATEY_API_KEY }}'
