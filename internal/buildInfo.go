@@ -6,7 +6,10 @@ type BuildInfo struct {
 }
 
 func (b *BuildInfo) GetShortCommit() string {
-	return b.Commit[0:7]
+	if len(b.Commit) >= 7 {
+		return b.Commit[0:7]
+	}
+	return b.Commit
 }
 
 var ServeInfo *BuildInfo
