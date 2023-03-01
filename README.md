@@ -51,7 +51,7 @@ You can download the latest release binaries available in the
 > is a new version of `serve`.
 
 #### Package manager
-In MacOS/Windows environments you can install `serve` using [Homebrew](https://brew.sh):
+In macOS/Windows environments you can install `serve` using [Homebrew](https://brew.sh):
 
 ```shell
 brew install planta7/tap/serve
@@ -62,6 +62,9 @@ If you are on a Windows machine, you can use [Chocolatey](https://chocolatey.org
 ```shell
 choco install serve
 ```
+
+> **Warning**
+> Chocolatey builds are temporarily disabled.
 
 #### Install from sources
 
@@ -122,7 +125,7 @@ serve local --certFile /path/to/certFile --keyFile /path/to/keyFile
 ```
 
 If you are using self-signed certificates you will receive a security alert in the browser indicating that the
-certificate is not trusted, you can safely ignore the warning or you can provide a valid certificate to `serve`.
+certificate is not trusted, you can safely ignore the warning, or you can provide a valid certificate to `serve`.
 
 Whatever the combination of parameters, `--verbose` or `-v` flag enables detailed output of what is happening on
 the server.
