@@ -23,6 +23,7 @@ var (
 		})
 	DefaultStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.NoColor{})
+	NewVersionStyle = _2Family
 )
 
 func GetStyle(statusCode int) lipgloss.Style {

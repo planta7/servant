@@ -13,4 +13,5 @@ var (
 func main() {
 	internal.SetBuildInfo(version, commit)
 	cmd.Execute()
+	internal.CheckForUpdates(version)
 }
