@@ -36,7 +36,7 @@
 + Create a local HTTP server from any directory
 + Bind any local address to the server
 + Customize it with global or configuration files, environment variables or flags
-+ TLS support
++ TLS support with optional embedded certificate
 + Configure CORS with a simple flag
 
 ### Installation
@@ -89,6 +89,7 @@ Usage:
   serve local [flags]
 
 Flags:
+      --autoTLS           Start with embedded certificate (default is false)
       --certFile string   Path to certificate (default is empty)
   -c, --cors              Enable CORS (default is false)
   -h, --help              help for local
@@ -124,7 +125,13 @@ the certificate file and its key:
 serve local --certFile /path/to/certFile --keyFile /path/to/keyFile
 ```
 
-If you are using self-signed certificates you will receive a security alert in the browser indicating that the
+Or if you prefer, you can let `serve` generate a self-signed certificate and key randomly at startup.
+
+```shell
+serve local --autoTLS
+```
+
+If you are using embedded or self-signed certificates you will receive a security alert in the browser indicating that the
 certificate is not trusted, you can safely ignore the warning, or you can provide a valid certificate to `serve`.
 
 Whatever the combination of parameters, `--verbose` or `-v` flag enables detailed output of what is happening on

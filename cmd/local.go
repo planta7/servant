@@ -8,14 +8,14 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var config = &local.Configuration{}
+var request = &local.ServerRequest{}
 
 var localCmd = &cobra.Command{
 	Use:   "local",
-	Short: "Start local HTTP server",
+	Short: "Start a local HTTP server",
 	Args:  cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		config.Path = "./"
+		request.Path = "./"
 
 		var parsedFlags []string
 		cmd.Flags().Visit(func(f *pflag.Flag) {
@@ -24,21 +24,23 @@ var localCmd = &cobra.Command{
 
 		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 		if len(args) > 0 {
-			config.Path = args[0]
+			request.Path = args[0]
 		}
 
-		server := local.NewServer(*config)
+		server := local.NewServer(*request)
 		server.Start()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(localCmd)
-	localCmd.Flags().StringVarP(&config.Host, "host", "", "", "Server host (default is empty)")
-	localCmd.Flags().IntVarP(&config.Port, "port", "p", 0, "Listen on port (default is random)")
-	localCmd.Flags().BoolVarP(&config.CORS, "cors", "c", false, "Enable CORS (default is false)")
-	localCmd.Flags().BoolVarP(&config.Launch, "launch", "l", false, "Launch default browser (default is empty)")
-	localCmd.Flags().StringVarP(&config.TLS.CertFile, "certFile", "", "", "Path to certificate (default is empty)")
-	localCmd.Flags().StringVarP(&config.TLS.KeyFile, "keyFile", "", "", "Path to key")
+	localCmd.Flags().StringVarP(&request.Host, "host", "", "", "Server host (default is empty)")
+	localCmd.Flags().IntVarP(&request.Port, "port", "p", 0, "Listen on port (default is random)")
+	localCmd.Flags().BoolVarP(&request.CORS, "cors", "c", false, "Enable CORS (default is false)")
+	localCmd.Flags().BoolVarP(&request.Launch, "launch", "l", false, "Launch default browser (default is false)")
+	localCmd.Flags().BoolVarP(&request.TLS.Auto, "autoTLS", "", false, "Start with embedded certificate (default is false)")
+	localCmd.Flags().StringVarP(&request.TLS.CertFile, "certFile", "", "", "Path to certificate (default is empty)")
+	localCmd.Flags().StringVarP(&request.TLS.KeyFile, "keyFile", "", "", "Path to key")
 	localCmd.MarkFlagsRequiredTogether("certFile", "keyFile")
+	localCmd.MarkFlagsMutuallyExclusive("autoTLS", "certFile")
 }

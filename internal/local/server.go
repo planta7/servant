@@ -19,39 +19,50 @@ import (
 	"time"
 )
 
-type Configuration struct {
+type ServerRequest struct {
 	Path   string
 	Host   string
-	TLS    TLSConfiguration
+	TLS    TLSRequest
 	Port   int
 	CORS   bool
 	Launch bool
 }
 
-func (c *Configuration) WantsTLS() bool {
-	return c.TLS.CertFile != "" && c.TLS.KeyFile != ""
+func (r *ServerRequest) WantsAutoTLS() bool {
+	return r.TLS.Auto
 }
 
-type TLSConfiguration struct {
+func (r *ServerRequest) WantsTLS() bool {
+	return r.WantsAutoTLS() || (r.TLS.CertFile != "" && r.TLS.KeyFile != "")
+}
+
+type TLSRequest struct {
+	Auto     bool
 	CertFile string
 	KeyFile  string
 }
 
-type serverValues struct {
-	hosts  []string
-	schema string
+type serverConfiguration struct {
+	hosts       []string
+	schema      string
+	certificate serverCertificate
 }
 
-func (v *serverValues) getDefault() string {
+type serverCertificate struct {
+	certFile string
+	keyFile  string
+}
+
+func (v *serverConfiguration) getDefault() string {
 	return fmt.Sprintf("%s://%s", v.schema, v.hosts[len(v.hosts)-1])
 }
 
 type Server struct {
-	config Configuration
-	values serverValues
+	config ServerRequest
+	values serverConfiguration
 }
 
-func NewServer(config Configuration) *Server {
+func NewServer(config ServerRequest) *Server {
 	return &Server{config: config}
 }
 
@@ -90,7 +101,7 @@ func (s *Server) createChannel() (chan os.Signal, func()) {
 }
 
 func (s *Server) start(server *http.Server, listener net.Listener) {
-	s.resolveServerValues(listener)
+	s.resolveServerConfiguration(listener)
 	listenersValue := s.getListenersValue()
 	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue))
 
@@ -105,7 +116,7 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 
 	var err error
 	if s.config.WantsTLS() {
-		err = server.ServeTLS(listener, s.config.TLS.CertFile, s.config.TLS.KeyFile)
+		err = server.ServeTLS(listener, s.values.certificate.certFile, s.values.certificate.keyFile)
 	} else {
 		err = server.Serve(listener)
 	}
@@ -128,24 +139,39 @@ func (s *Server) shutdown(ctx context.Context, server *http.Server) {
 	}
 }
 
-func (s *Server) resolveServerValues(listener net.Listener) {
-	resolvedPort := s.config.Port
+func (s *Server) resolveServerConfiguration(listener net.Listener) {
+	port := s.config.Port
 	if s.config.Port == 0 {
-		resolvedPort = listener.Addr().(*net.TCPAddr).Port
+		port = listener.Addr().(*net.TCPAddr).Port
 	}
-	var resolvedHosts []string
+	var hosts []string
 	if s.config.Host == "" {
 		localIP, _ := network.LocalIP()
-		resolvedHosts = append(resolvedHosts, fmt.Sprintf("127.0.0.1:%d", resolvedPort))
-		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", localIP.String(), resolvedPort))
+		hosts = append(hosts, fmt.Sprintf("127.0.0.1:%d", port))
+		hosts = append(hosts, fmt.Sprintf("%s:%d", localIP.String(), port))
 	} else {
-		resolvedHosts = append(resolvedHosts, fmt.Sprintf("%s:%d", s.config.Host, resolvedPort))
+		hosts = append(hosts, fmt.Sprintf("%s:%d", s.config.Host, port))
 	}
-	resolvedSchema := "http"
+	var certFile, keyFile string
+	schema := "http"
 	if s.config.WantsTLS() {
-		resolvedSchema = "https"
+		schema = "https"
+		if s.config.WantsAutoTLS() {
+			log.Debug("Generating self-signed certificate and key")
+			certFile, keyFile = network.GenerateAutoTLS()
+		} else {
+			log.Debug("Using an external certificate and key", "cert", s.config.TLS.CertFile, "key", s.config.TLS.KeyFile)
+			certFile, keyFile = s.config.TLS.CertFile, s.config.TLS.KeyFile
+		}
 	}
-	s.values = serverValues{hosts: resolvedHosts, schema: resolvedSchema}
+	s.values = serverConfiguration{
+		hosts:  hosts,
+		schema: schema,
+		certificate: serverCertificate{
+			certFile: certFile,
+			keyFile:  keyFile,
+		},
+	}
 }
 
 func (s *Server) getListenersValue() string {
