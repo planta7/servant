@@ -1,4 +1,4 @@
-<h1 style="text-align: center;">
+<h1 align="center">
   <br>
   <img src="./assets/logo.png" alt="serve" width="100">
   <br>
@@ -8,7 +8,7 @@
 
 <h4 align="center">Easily expose any content on your<br/>computer through a local web server.</h4>
 
-<p style="text-align: center;">
+<p align="center">
   <a href="https://github.com/planta7/serve/actions/workflows/ci.yaml">
     <img src="https://github.com/planta7/serve/actions/workflows/ci.yaml/badge.svg" alt="CI badge">
   </a>
@@ -20,7 +20,7 @@
   </a>
 </p>
 
-<p style="text-align: center;">
+<p align="center">
   <a href="#key-features">Key features</a> •
   <a href="#installation">Installation</a> •
   <a href="#usage">Usage</a> •
