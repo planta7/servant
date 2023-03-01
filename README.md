@@ -154,6 +154,7 @@ You can configure `serve` using flags, but you also have other options:
   + `$HOME` directory (global)
   + Specified by the flag `--config`
 + Using environment variables
+  + `SERVE_AUTOTLS`
   + `SERVE_CERTFILE`
   + `SERVE_CORS`
   + `SERVE_HOST`
