@@ -1,0 +1,19 @@
+package internal
+
+type BuildInfo struct {
+	Version string
+	Commit  string
+}
+
+func (b *BuildInfo) GetShortCommit() string {
+	return b.Commit[0:7]
+}
+
+var ServeInfo *BuildInfo
+
+func SetBuildInfo(version string, commit string) {
+	ServeInfo = &BuildInfo{
+		Version: version,
+		Commit:  commit,
+	}
+}

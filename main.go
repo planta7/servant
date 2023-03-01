@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"github.com/charmbracelet/log"
 	"serve/cmd"
+	"serve/internal"
 )
 
 var (
@@ -12,6 +11,6 @@ var (
 )
 
 func main() {
-	log.Info(fmt.Sprintf("serve %s (%s)", version, commit))
+	internal.SetBuildInfo(version, commit)
 	cmd.Execute()
 }

@@ -22,11 +22,12 @@ var localCmd = &cobra.Command{
 		cmd.Flags().Visit(func(f *pflag.Flag) {
 			parsedFlags = append(parsedFlags, fmt.Sprintf("%s:%s", f.Name, f.Value.String()))
 		})
-		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 
+		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 		if len(args) > 0 {
 			config.Path = args[0]
 		}
+
 		server := local.NewServer(*config)
 		server.Start()
 	},

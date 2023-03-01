@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
+	"serve/internal"
 	"strings"
 )
 
@@ -21,6 +22,9 @@ var rootCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Create an HTTP server in a jiffy",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		log.Info(fmt.Sprintf("serve %s (%s)",
+			internal.ServeInfo.Version,
+			internal.ServeInfo.GetShortCommit()))
 		bindFlags(cmd)
 		if verbose {
 			log.SetLevel(log.DebugLevel)
