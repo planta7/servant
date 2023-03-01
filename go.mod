@@ -1,4 +1,4 @@
-module serve
+module github.com/planta7/serve
 
 go 1.20
 

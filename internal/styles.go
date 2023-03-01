@@ -1,3 +1,6 @@
+// MIT Licensed
+// Copyright (c) 2023 Roberto García <roberto@planta7.io>
+
 package internal
 
 import (
@@ -37,6 +40,5 @@ func GetStyle(statusCode int) lipgloss.Style {
 		return _5Family.SetString(statusString)
 	default:
 		return DefaultStyle.SetString(statusString)
-
 	}
 }

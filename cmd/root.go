@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 	"github.com/charmbracelet/log"
+	"github.com/planta7/serve/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
-	"serve/internal"
 	"strings"
 )
 

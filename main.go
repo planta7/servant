@@ -1,8 +1,11 @@
+// MIT Licensed
+// Copyright (c) 2023 Roberto García <roberto@planta7.io>
+
 package main
 
 import (
-	"serve/cmd"
-	"serve/internal"
+	"github.com/planta7/serve/cmd"
+	"github.com/planta7/serve/internal"
 )
 
 var (

@@ -1,3 +1,6 @@
+// MIT Licensed
+// Copyright (c) 2023 Roberto García <roberto@planta7.io>
+
 package local
 
 import (
@@ -5,12 +8,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/charmbracelet/log"
+	"github.com/planta7/serve/internal"
+	"github.com/planta7/serve/internal/network"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"serve/internal"
-	"serve/internal/network"
 	"strings"
 	"syscall"
 	"time"
