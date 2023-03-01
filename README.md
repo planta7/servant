@@ -63,9 +63,6 @@ If you are on a Windows machine, you can use [Chocolatey](https://chocolatey.org
 choco install serve
 ```
 
-> **Warning**
-> Chocolatey builds are temporarily disabled.
-
 #### Install from sources
 
 ```shell
