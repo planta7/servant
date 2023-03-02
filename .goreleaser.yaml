@@ -51,7 +51,7 @@ chocolateys:
     authors: Roberto García
     project_url: https://github.com/planta7/serve
     url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    icon_url: https://github.com/planta7/serve/blob/main/assets/logo.png
+    icon_url: https://raw.githubusercontent.com/planta7/serve/main/assets/logo.png
     copyright: 2023 Roberto García
     license_url: https://github.com/planta7/serve/blob/main/LICENSE
     project_source_url: https://github.com/planta7/serve
