@@ -47,7 +47,7 @@ brews:
     install: |
       bin.install "serve"
 chocolateys:
-  - name: serve
+  - name: serve-cli
     authors: Roberto García
     project_url: https://github.com/planta7/serve
     url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"

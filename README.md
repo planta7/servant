@@ -60,7 +60,7 @@ brew install planta7/tap/serve
 If you are on a Windows machine, you can use [Chocolatey](https://chocolatey.org):
 
 ```shell
-choco install serve
+choco install serve-cli
 ```
 
 #### Install from sources
