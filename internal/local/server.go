@@ -110,7 +110,7 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 		log.Debug("Launching default browser", "url", url)
 		err := internal.LaunchBrowser(url)
 		if err != nil {
-			log.Warn("Invalid URL", "url", url)
+			log.Warn("Failed to launch", "error", err.Error())
 		}
 	}
 
