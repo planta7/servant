@@ -2,6 +2,7 @@ before:
   hooks:
     - go mod tidy
     - rm -rf dist/
+    - ./scripts/completions.sh
 builds:
   - env:
       - CGO_ENABLED=0
@@ -21,6 +22,9 @@ archives:
     format_overrides:
     - goos: windows
       format: zip
+    files:
+    - completions/*
+    rlcp: true
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -46,6 +50,10 @@ brews:
     license: "MIT"
     install: |
       bin.install "serve"
+      bash_completion.install "completions/serve.bash" => "serve"
+      zsh_completion.install "completions/serve.zsh" => "_serve"
+      fish_completion.install "completions/serve.fish"
+    caveats: "Thanks for installing serve!"
 chocolateys:
   - name: serve-cli
     authors: Roberto García

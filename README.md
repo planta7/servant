@@ -83,7 +83,10 @@ there are also a number of options that you can configure to suit your needs:
 
 ```shell
 Usage:
-  serve local [flags]
+  serve local [path] [flags]
+
+Aliases:
+  local, l
 
 Flags:
       --autoTLS           Start with embedded certificate (default is false)
@@ -170,6 +173,7 @@ Priority for applying the value to parameters is as follows:
    1. Specified by `--config`
    2. Local
    3. Global
+4. Defaults
 
 The result will be a merge after applying the above order.
 

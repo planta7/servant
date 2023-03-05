@@ -2,3 +2,4 @@
 serve
 .DS_Store
 dist/
+completions

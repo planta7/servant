@@ -11,9 +11,10 @@ import (
 var request = &local.ServerRequest{}
 
 var localCmd = &cobra.Command{
-	Use:   "local",
-	Short: "Start a local HTTP server",
-	Args:  cobra.MaximumNArgs(2),
+	Use:     "local [path]",
+	Aliases: []string{"l"},
+	Short:   "Start a local HTTP server",
+	Args:    cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		request.Path = "./"
 
