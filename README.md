@@ -89,14 +89,14 @@ Aliases:
   local, l
 
 Flags:
-      --autoTLS           Start with embedded certificate (default is false)
-      --certFile string   Path to certificate (default is empty)
-  -c, --cors              Enable CORS (default is false)
-  -h, --help              help for local
-      --host string       Server host (default is empty)
-      --keyFile string    Path to key (default is empty)
-  -l, --launch            Launch default browser  (default is false)
-  -p, --port int          Listen on port (default is random)
+      --auto-tls           Start with embedded certificate (default is false)
+      --cert-file string   Path to certificate (default is empty)
+  -c, --cors               Enable CORS (default is false)
+  -h, --help               help for local
+      --host string        Server host (default is empty)
+      --key-file string    Path to key (default is empty)
+  -l, --launch             Launch default browser  (default is false)
+  -p, --port int           Listen on port (default is random)
 
 Global Flags:
       --config string   config file (default is ./serve and $HOME/.serve)
@@ -122,13 +122,13 @@ The above examples start an HTTP server, but if you need to launch an HTTPS serv
 the certificate file and its key:
 
 ```shell
-serve local --certFile /path/to/certFile --keyFile /path/to/keyFile
+serve local --cert-file /path/to/cert-file --key-file /path/to/key-file
 ```
 
 Or if you prefer, you can let `serve` generate a self-signed certificate and key randomly at startup.
 
 ```shell
-serve local --autoTLS
+serve local --auto-tls
 ```
 
 If you are using embedded or self-signed certificates you will receive a security alert in the browser indicating that the
@@ -157,11 +157,11 @@ You can configure `serve` using flags, but you also have other options:
   + `$HOME` directory (global)
   + Specified by the flag `--config`
 + Using environment variables
-  + `SERVE_AUTOTLS`
-  + `SERVE_CERTFILE`
+  + `SERVE_AUTO_TLS`
+  + `SERVE_CERT_FILE`
   + `SERVE_CORS`
   + `SERVE_HOST`
-  + `SERVE_KEYFILE`
+  + `SERVE_KEY_FILE`
   + `SERVE_LAUNCH`
   + `SERVE_PORT`
 

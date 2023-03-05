@@ -3,6 +3,6 @@ host: 192.168.3.12
 port: 8080
 cors: false
 launch: true
-autoTLS: false
-certFile: /path/to/certFile
-keyFile: /path/to/keyFile
+auto-tls: false
+cert-file: /path/to/cert-file
+key-file: /path/to/key-file
