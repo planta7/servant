@@ -57,8 +57,6 @@ type delegateKeyMap struct {
 	edit   key.Binding
 }
 
-// Additional short help entries. This satisfies the help.KeyMap interface and
-// is entirely optional.
 func (d delegateKeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		d.choose,
@@ -66,8 +64,6 @@ func (d delegateKeyMap) ShortHelp() []key.Binding {
 	}
 }
 
-// Additional full help entries. This satisfies the help.KeyMap interface and
-// is entirely optional.
 func (d delegateKeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{
