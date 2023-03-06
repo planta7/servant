@@ -97,6 +97,7 @@ Flags:
       --key-file string    Path to key (default is empty)
   -l, --launch             Launch default browser  (default is false)
   -p, --port int           Listen on port (default is random)
+      --tui                Launch with TUI (experimental)
 
 Global Flags:
       --config string   config file (default is ./serve and $HOME/.serve)
@@ -147,6 +148,14 @@ the server.
 > serve local --cors --launch --verbose --port 8080
 > ```
 
+#### TUI (experimental)
+
+I am developing a TUI (text user interface) for the next version of `serve`. This interface, besides presenting the
+information in a more attractive way, will also bring a lot of new functionalities for capturing and modifying server
+requests. Here's a sneak preview:
+
+![TUI console](assets/tui.png)
+
 ### Configuration
 ---
 
@@ -164,6 +173,7 @@ You can configure `serve` using flags, but you also have other options:
   + `SERVE_KEY_FILE`
   + `SERVE_LAUNCH`
   + `SERVE_PORT`
+  + `SERVE_TUI`
 
 Priority for applying the value to parameters is as follows:
 

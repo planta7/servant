@@ -28,20 +28,18 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 			case key.Matches(msg, keys.choose):
 				return m.NewStatusMessage(styles.StatusMessageStyle("You chose " + title))
 
-			case key.Matches(msg, keys.remove):
-				index := m.Index()
-				m.RemoveItem(index)
+			case key.Matches(msg, keys.edit):
 				if len(m.Items()) == 0 {
-					keys.remove.SetEnabled(false)
+					keys.edit.SetEnabled(false)
 				}
-				return m.NewStatusMessage(styles.StatusMessageStyle("Deleted " + title))
+				return m.NewStatusMessage(styles.StatusMessageStyle("(dummy) Editing " + title))
 			}
 		}
 
 		return nil
 	}
 
-	help := []key.Binding{keys.choose, keys.remove}
+	help := []key.Binding{keys.choose, keys.edit}
 
 	d.ShortHelpFunc = func() []key.Binding {
 		return help
@@ -56,7 +54,7 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 
 type delegateKeyMap struct {
 	choose key.Binding
-	remove key.Binding
+	edit   key.Binding
 }
 
 // Additional short help entries. This satisfies the help.KeyMap interface and
@@ -64,7 +62,7 @@ type delegateKeyMap struct {
 func (d delegateKeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		d.choose,
-		d.remove,
+		d.edit,
 	}
 }
 
@@ -74,7 +72,7 @@ func (d delegateKeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{
 			d.choose,
-			d.remove,
+			d.edit,
 		},
 	}
 }
@@ -85,9 +83,9 @@ func newDelegateKeyMap() *delegateKeyMap {
 			key.WithKeys("enter"),
 			key.WithHelp("enter", "choose"),
 		),
-		remove: key.NewBinding(
-			key.WithKeys("x", "backspace"),
-			key.WithHelp("x", "delete"),
+		edit: key.NewBinding(
+			key.WithKeys("e"),
+			key.WithHelp("e", "edit"),
 		),
 	}
 }
