@@ -38,7 +38,7 @@
 + Customize it with global or configuration files, environment variables or flags
 + TLS support with optional embedded certificate
 + Configure CORS with a simple flag
-+ Supercharged [TUI](#tui--experimental-) with advanced features
++ Supercharged [TUI](#tui-experimental) with advanced features
 
 ### Installation
 ---
