@@ -1,7 +1,7 @@
 // MIT Licensed
 // Copyright (c) 2023 Roberto García <roberto@planta7.io>
 
-package internal
+package styles
 
 import (
 	"github.com/charmbracelet/lipgloss"
@@ -18,17 +18,17 @@ func TestGetStyle(t *testing.T) {
 		{
 			"ok",
 			200,
-			_2Family.SetString("200"),
+			Family2xx.SetString("200"),
 		},
 		{
 			"not found",
 			404,
-			_4Family.SetString("404"),
+			Family4xx.SetString("404"),
 		},
 		{
 			"internal server error",
 			500,
-			_5Family.SetString("500"),
+			Family5xx.SetString("500"),
 		},
 		{
 			"redirection",
