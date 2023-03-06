@@ -11,6 +11,7 @@ import (
 
 const (
 	ContentLength             = "Content-Length"
+	ContentType               = "Content-Type"
 	AccessControlAllowOrigin  = "Access-Control-Allow-Origin"
 	AccessControlAllowMethods = "Access-Control-Allow-Methods"
 )

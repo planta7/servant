@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/charmbracelet/log"
+	"github.com/planta7/serve/internal/styles"
 	"io"
 	"net/http"
 )
@@ -37,7 +38,7 @@ func CheckForUpdates(current string) {
 	}
 	latest := tagName.(string)[1:]
 	if current != latest {
-		message := NewVersionStyle.Render(
+		message := styles.NewVersionStyle.Render(
 			fmt.Sprintf("\nThere is a new version available (v%s). Go to %s for more details.\n", latest, RepoUrl))
 		fmt.Println(message)
 	}

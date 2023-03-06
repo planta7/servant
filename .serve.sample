@@ -6,3 +6,4 @@ launch: true
 auto-tls: false
 cert-file: /path/to/cert-file
 key-file: /path/to/key-file
+tui: true

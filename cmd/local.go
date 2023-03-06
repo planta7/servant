@@ -42,6 +42,7 @@ func init() {
 	localCmd.Flags().BoolVarP(&request.TLS.Auto, "auto-tls", "", false, "Start with embedded certificate (default is false)")
 	localCmd.Flags().StringVarP(&request.TLS.CertFile, "cert-file", "", "", "Path to certificate (default is empty)")
 	localCmd.Flags().StringVarP(&request.TLS.KeyFile, "key-file", "", "", "Path to key")
+	localCmd.Flags().BoolVarP(&request.TUI, "tui", "", false, "Launch with TUI (experimental)")
 	localCmd.MarkFlagsRequiredTogether("cert-file", "key-file")
 	localCmd.MarkFlagsMutuallyExclusive("auto-tls", "cert-file")
 }

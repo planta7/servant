@@ -7,13 +7,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
 	"github.com/planta7/serve/internal"
+	"github.com/planta7/serve/internal/manager"
 	"github.com/planta7/serve/internal/network"
+	"github.com/planta7/serve/internal/tui"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -26,6 +30,7 @@ type ServerRequest struct {
 	Port   int
 	CORS   bool
 	Launch bool
+	TUI    bool
 }
 
 func (r *ServerRequest) WantsAutoTLS() bool {
@@ -58,12 +63,17 @@ func (v *serverConfiguration) getDefault() string {
 }
 
 type Server struct {
-	config ServerRequest
-	values serverConfiguration
+	config   ServerRequest
+	values   serverConfiguration
+	requests *manager.RequestManager
+	output   manager.OutputManager
 }
 
 func NewServer(config ServerRequest) *Server {
-	return &Server{config: config}
+	return &Server{
+		config:   config,
+		requests: manager.NewRequestManager(),
+	}
 }
 
 func (s *Server) Start() {
@@ -103,7 +113,29 @@ func (s *Server) createChannel() (chan os.Signal, func()) {
 func (s *Server) start(server *http.Server, listener net.Listener) {
 	s.resolveServerConfiguration(listener)
 	listenersValue := s.getListenersValue()
-	log.Info(fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue))
+	servingInfo := fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue)
+	log.Info(servingInfo)
+
+	if s.config.TUI {
+		log.Debug("Using TUI output")
+		servingInfo = fmt.Sprintf("serve %s (%s) - TUI [experimental]\n%s",
+			internal.ServeInfo.Version,
+			internal.ServeInfo.GetShortCommit(),
+			servingInfo)
+		model := tui.NewModel(servingInfo)
+		s.output = manager.NewTuiOutput(&model)
+
+		go func() {
+			if _, err := tea.NewProgram(model).Run(); err != nil {
+				log.Fatal("Error running TUI", "error", err.Error())
+			}
+			p, _ := os.FindProcess(os.Getpid())
+			_ = p.Signal(syscall.SIGTERM)
+		}()
+	} else {
+		log.Debug("Using Log output")
+		s.output = manager.NewLogOutput()
+	}
 
 	if s.config.Launch {
 		url := s.values.getDefault()
@@ -182,30 +214,32 @@ func (s *Server) getListenersValue() string {
 	return strings.Join(listeners, ", ")
 }
 
-func (s *Server) getContentLength(header http.Header) string {
-	value := header.Get(network.ContentLength)
-	if value != "" {
-		return fmt.Sprintf("(%s)", value)
-	}
-	return ""
-}
-
 func (s *Server) handleRequest(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
 		lrw := network.NewLoggingResponseWriter(w)
 		if s.config.CORS {
 			w.Header().Set(network.AccessControlAllowOrigin, "*")
 			w.Header().Set(network.AccessControlAllowMethods, "*")
 		}
 		h.ServeHTTP(lrw, r)
-		contentLengthHeader := s.getContentLength(w.Header())
-		statusStyle := internal.GetStyle(lrw.StatusCode)
-		logLine := fmt.Sprintf("%s\t%s\t%s\t%s %s",
-			r.RemoteAddr,
-			statusStyle,
-			r.Method,
-			r.RequestURI,
-			contentLengthHeader)
-		log.Info(logLine)
+		duration := time.Since(start)
+		contentType := w.Header().Get(network.ContentType)
+		stringContentLength := w.Header().Get(network.ContentLength)
+		contentLength, _ := strconv.ParseInt(stringContentLength, 10, 64)
+		unsignedContentLength := uint64(contentLength)
+
+		request := &manager.Request{
+			RemoteAddress: r.RemoteAddr,
+			Url:           r.RequestURI,
+			Method:        r.Method,
+			Status:        lrw.StatusCode,
+			Time:          &duration,
+			Body:          "",
+			ContentType:   contentType,
+			ContentLength: unsignedContentLength,
+		}
+		s.requests.Add(request)
+		s.output.Write(request)
 	})
 }
