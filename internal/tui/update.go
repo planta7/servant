@@ -55,14 +55,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if itemCount > 0 {
 			lastItem = m.list.Items()[len(m.list.Items())-1]
 		}
-		insCmd := m.list.InsertItem(len(m.list.Items()), msg)
 		statusCmd := m.list.NewStatusMessage(styles.StatusMessageStyle("Added " + msg.Title()))
 
 		if m.list.SelectedItem() == lastItem {
 			m.list.Select(len(m.list.Items()) - 1)
 		}
 
-		return m, tea.Batch(insCmd, statusCmd, waitForActivity(m.channel))
+		return m, tea.Batch(statusCmd, waitForActivity(m.channel))
 	}
 
 	// This will also call our delegate's update function.
