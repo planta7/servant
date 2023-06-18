@@ -39,6 +39,7 @@ func init() {
 	localCmd.Flags().IntVarP(&request.Port, "port", "p", 0, "Listen on port (default is random)")
 	localCmd.Flags().BoolVarP(&request.CORS, "cors", "c", false, "Enable CORS (default is false)")
 	localCmd.Flags().BoolVarP(&request.Launch, "launch", "l", false, "Launch default browser (default is false)")
+	localCmd.Flags().StringVarP(&request.Auth, "auth", "", "", "username:password for basic auth (default is empty)")
 	localCmd.Flags().BoolVarP(&request.TLS.Auto, "auto-tls", "", false, "Start with embedded certificate (default is false)")
 	localCmd.Flags().StringVarP(&request.TLS.CertFile, "cert-file", "", "", "Path to certificate (default is empty)")
 	localCmd.Flags().StringVarP(&request.TLS.KeyFile, "key-file", "", "", "Path to key")

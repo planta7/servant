@@ -5,6 +5,8 @@ package local
 
 import (
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
 	"errors"
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
@@ -30,6 +32,7 @@ type ServerRequest struct {
 	Port   int
 	CORS   bool
 	Launch bool
+	Auth   string
 	TUI    bool
 }
 
@@ -78,8 +81,9 @@ func NewServer(config ServerRequest) *Server {
 
 func (s *Server) Start() {
 	fullAddress := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
+	fileServer := http.FileServer(http.Dir(s.config.Path))
 	mux := http.NewServeMux()
-	mux.Handle("/", s.handleRequest(http.FileServer(http.Dir(s.config.Path))))
+	mux.Handle("/", s.handleRequest(fileServer))
 
 	listener, err := net.Listen("tcp", fullAddress)
 	if err != nil {
@@ -135,6 +139,10 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 	} else {
 		log.Debug("Using Log output")
 		s.output = manager.NewLogOutput()
+	}
+
+	if s.config.Auth != "" {
+		log.Debug("Using basic authentication")
 	}
 
 	if s.config.Launch {
@@ -215,7 +223,7 @@ func (s *Server) getListenersValue() string {
 }
 
 func (s *Server) handleRequest(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	requestHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		lrw := network.NewLoggingResponseWriter(w)
 		if s.config.CORS {
@@ -235,11 +243,42 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 			Method:        r.Method,
 			Status:        lrw.StatusCode,
 			Time:          &duration,
-			Body:          "",
+			Body:          &r.Body,
 			ContentType:   contentType,
 			ContentLength: unsignedContentLength,
 		}
 		s.requests.Add(request)
 		s.output.Write(request)
+	})
+
+	if s.config.Auth != "" {
+		return s.handleBasicAuth(requestHandler)
+	} else {
+		return requestHandler
+	}
+}
+
+func (s *Server) handleBasicAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		username, password, ok := r.BasicAuth()
+		if ok {
+			userPassword := strings.Split(s.config.Auth, ":")
+			usernameHash := sha256.Sum256([]byte(username))
+			passwordHash := sha256.Sum256([]byte(password))
+			expectedUsernameHash := sha256.Sum256([]byte(userPassword[0]))
+			expectedPasswordHash := sha256.Sum256([]byte(userPassword[1]))
+
+			usernameMatch := subtle.ConstantTimeCompare(usernameHash[:], expectedUsernameHash[:]) == 1
+			passwordMatch := subtle.ConstantTimeCompare(passwordHash[:], expectedPasswordHash[:]) == 1
+
+			if usernameMatch && passwordMatch {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+
+		log.Warn("Basic auth not passed", r)
+		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})
 }

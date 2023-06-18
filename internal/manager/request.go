@@ -3,7 +3,10 @@
 
 package manager
 
-import "time"
+import (
+	"io"
+	"time"
+)
 
 type Request struct {
 	RemoteAddress string
@@ -11,7 +14,7 @@ type Request struct {
 	Method        string
 	Status        int
 	Time          *time.Duration
-	Body          string
+	Body          *io.ReadCloser
 	ContentType   string
 	ContentLength uint64
 	// TODO: headers

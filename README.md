@@ -36,6 +36,7 @@
 + Create a local HTTP server from any directory
 + Bind any local address to the server
 + Customize it with global or configuration files, environment variables or flags
++ Support for basic authorization
 + TLS support with optional embedded certificate
 + Configure CORS with a simple flag
 + Supercharged [TUI](#tui-experimental) with advanced features
@@ -90,6 +91,7 @@ Aliases:
   local, l
 
 Flags:
+      --auth string        username:password for basic auth (default is empty)
       --auto-tls           Start with embedded certificate (default is false)
       --cert-file string   Path to certificate (default is empty)
   -c, --cors               Enable CORS (default is false)
@@ -167,6 +169,7 @@ You can configure `serve` using flags, but you also have other options:
   + `$HOME` directory (global)
   + Specified by the flag `--config`
 + Using environment variables
+  + `SERVE_AUTH`
   + `SERVE_AUTO_TLS`
   + `SERVE_CERT_FILE`
   + `SERVE_CORS`
