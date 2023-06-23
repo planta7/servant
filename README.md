@@ -36,7 +36,7 @@
 + Create a local HTTP server from any directory
 + Bind any local address to the server
 + Customize it with global or configuration files, environment variables or flags
-+ Support for basic authorization
++ Support for basic authentication
 + TLS support with optional embedded certificate
 + Configure CORS with a simple flag
 + Supercharged [TUI](#tui-experimental) with advanced features
