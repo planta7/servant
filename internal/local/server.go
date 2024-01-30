@@ -15,6 +15,7 @@ import (
 	"github.com/planta7/serve/internal/manager"
 	"github.com/planta7/serve/internal/network"
 	"github.com/planta7/serve/internal/tui"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -25,15 +26,44 @@ import (
 	"time"
 )
 
+const fileServerCss = `
+	<style>
+		pre {
+			white-space:normal;
+			font-family: Courier New;
+			padding: 20px;
+		}
+		pre a {
+			display: block;
+			color: DarkSlateGray;
+			margin-bottom: 5px;
+		}
+		pre a:before {
+			display: inline-block;
+			padding-right: 3px;
+			vertical-align: middle;
+		}
+		pre a[href$="/"] {
+			font-weight: 600;
+		}
+		pre a[href$="/"]:before {
+			content: "[D]";
+		}
+		pre a:not([href$="/"]):before {
+			content: "[F]";
+		}
+	</style>
+	`
+
 type ServerRequest struct {
-	Path   string
-	Host   string
-	TLS    TLSRequest
-	Port   int
-	CORS   bool
-	Launch bool
-	Auth   string
-	TUI    bool
+	Path       string
+	Host       string
+	TLS        TLSRequest
+	Port       int
+	CORS       bool
+	Launch     bool
+	Auth       string
+	DisableTUI bool
 }
 
 func (r *ServerRequest) WantsAutoTLS() bool {
@@ -231,6 +261,9 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 			w.Header().Set(network.AccessControlAllowMethods, "*")
 		}
 		h.ServeHTTP(lrw, r)
+		if s.isDirectoryListing(r.URL.Path) {
+			_, _ = io.WriteString(w, fileServerCss)
+		}
 		duration := time.Since(start)
 		contentType := w.Header().Get(network.ContentType)
 		stringContentLength := w.Header().Get(network.ContentLength)
@@ -281,4 +314,8 @@ func (s *Server) handleBasicAuth(next http.Handler) http.Handler {
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})
+}
+
+func (s *Server) isDirectoryListing(path string) bool {
+	return path[len(path)-1] == '/'
 }
