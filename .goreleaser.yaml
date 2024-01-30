@@ -54,22 +54,3 @@ brews:
       zsh_completion.install "completions/serve.zsh" => "_serve"
       fish_completion.install "completions/serve.fish"
     caveats: "Thanks for installing serve!"
-chocolateys:
-  - name: serve-cli
-    authors: Roberto García
-    project_url: https://github.com/planta7/serve
-    url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    icon_url: https://rawcdn.githack.com/planta7/serve/6cd826c98263945f46a0fe9e0278c8efa2ab6a15/assets/logo.png
-    copyright: 2023 Roberto García
-    license_url: https://github.com/planta7/serve/blob/main/LICENSE
-    project_source_url: https://github.com/planta7/serve
-    package_source_url: https://github.com/chocolatey-community/chocolatey-packages/tree/master/automatic/serve
-    docs_url: https://github.com/planta7/serve/blob/main/README.md
-    bug_tracker_url: https://github.com/planta7/serve/issues
-    tags: "cli golang local http-server development-tools"
-    summary: Create a local server from any location on your computer
-    description: |
-      {{ .ProjectName }} installer package.
-      `serve` allows you to easily expose any content on your computer through a local web server.
-    release_notes: "https://github.com/planta7/serve/releases/tag/v{{ .Version }}"
-    api_key: '{{ .Env.CHOCOLATEY_API_KEY }}'

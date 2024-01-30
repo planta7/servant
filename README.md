@@ -59,12 +59,6 @@ In macOS/Windows environments you can install `serve` using [Homebrew](https://b
 brew install planta7/tap/serve
 ```
 
-If you are on a Windows machine, you can use [Chocolatey](https://chocolatey.org):
-
-```shell
-choco install serve-cli
-```
-
 #### Install from sources
 
 ```shell
