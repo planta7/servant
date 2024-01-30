@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/planta7/serve/internal/styles"
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -15,7 +14,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		h, v := styles.AppStyle.GetFrameSize()
+		h, v := AppStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 
 	case tea.KeyMsg:
@@ -56,7 +55,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			lastItem = m.list.Items()[len(m.list.Items())-1]
 		}
 		insCmd := m.list.InsertItem(len(m.list.Items()), msg)
-		statusCmd := m.list.NewStatusMessage(styles.StatusMessageStyle("Added " + msg.Title()))
+		statusCmd := m.list.NewStatusMessage(StatusMessageStyle("Added " + msg.Title()))
 
 		if m.list.SelectedItem() == lastItem {
 			m.list.Select(len(m.list.Items()) - 1)

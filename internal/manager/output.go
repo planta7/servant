@@ -6,7 +6,6 @@ package manager
 import (
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/styles"
 	"github.com/planta7/serve/internal/tui"
 )
 
@@ -22,7 +21,7 @@ func NewLogOutput() OutputManager {
 }
 
 func (l *logOutput) Write(request *Request) {
-	statusText := styles.GetStyle(request.Status)
+	statusText := tui.GetStyle(request.Status)
 	contentLengthText := getContentLength(request.ContentLength)
 	logLine := fmt.Sprintf("%s\t%v\t%s\t%s\t%s %s",
 		request.RemoteAddress,
@@ -45,12 +44,12 @@ func NewTuiOutput(model *tui.Model) OutputManager {
 }
 
 func (t *tuiOutput) Write(request *Request) {
-	statusText := styles.GetStyle(request.Status)
+	statusText := tui.GetStyle(request.Status)
 	contentLengthText := getContentLength(request.ContentLength)
-	remoteAddressPart := styles.SecondaryTextStyle.Render(fmt.Sprintf("from %s", request.RemoteAddress))
+	remoteAddressPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("from %s", request.RemoteAddress))
 	title := fmt.Sprintf("%s %s %s", request.Method, request.Url, remoteAddressPart)
 
-	contentPart := styles.SecondaryTextStyle.Render(fmt.Sprintf("%s %s", request.ContentType, contentLengthText))
+	contentPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("%s %s", request.ContentType, contentLengthText))
 	description := fmt.Sprintf("%s %v %s", statusText, request.Time, contentPart)
 	t.model.Add(title, description)
 }

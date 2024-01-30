@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/planta7/serve/internal/styles"
 )
 
 func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
@@ -26,13 +25,13 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 		case tea.KeyMsg:
 			switch {
 			case key.Matches(msg, keys.choose):
-				return m.NewStatusMessage(styles.StatusMessageStyle("You chose " + title))
+				return m.NewStatusMessage(StatusMessageStyle("You chose " + title))
 
 			case key.Matches(msg, keys.edit):
 				if len(m.Items()) == 0 {
 					keys.edit.SetEnabled(false)
 				}
-				return m.NewStatusMessage(styles.StatusMessageStyle("(dummy) Editing " + title))
+				return m.NewStatusMessage(StatusMessageStyle("(dummy) Editing " + title))
 			}
 		}
 

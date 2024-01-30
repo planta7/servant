@@ -120,9 +120,12 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 	servingInfo := fmt.Sprintf("Serving %s at %s", s.config.Path, listenersValue)
 	log.Info(servingInfo)
 
-	if s.config.TUI {
+	if s.config.DisableTUI {
+		log.Debug("Using Log output")
+		s.output = manager.NewLogOutput()
+	} else {
 		log.Debug("Using TUI output")
-		servingInfo = fmt.Sprintf("serve %s (%s) - TUI [experimental]\n%s",
+		servingInfo = fmt.Sprintf("serve %s (%s)\n%s",
 			internal.ServeInfo.Version,
 			internal.ServeInfo.GetShortCommit(),
 			servingInfo)
@@ -136,9 +139,6 @@ func (s *Server) start(server *http.Server, listener net.Listener) {
 			p, _ := os.FindProcess(os.Getpid())
 			_ = p.Signal(syscall.SIGTERM)
 		}()
-	} else {
-		log.Debug("Using Log output")
-		s.output = manager.NewLogOutput()
 	}
 
 	if s.config.Auth != "" {

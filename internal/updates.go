@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/styles"
+	"github.com/planta7/serve/internal/tui"
 	"io"
 	"net/http"
 )
@@ -26,8 +26,7 @@ func CheckForUpdates(current string) {
 	}
 	resBody, err := io.ReadAll(res.Body)
 	resMap := map[string]any{}
-	err = json.Unmarshal(resBody, &resMap)
-	if err != nil {
+	if err = json.Unmarshal(resBody, &resMap); err != nil {
 		log.Warn("Error while parsing response", "error", err)
 		return
 	}
@@ -38,7 +37,7 @@ func CheckForUpdates(current string) {
 	}
 	latest := tagName.(string)[1:]
 	if current != latest {
-		message := styles.NewVersionStyle.Render(
+		message := tui.NewVersionStyle.Render(
 			fmt.Sprintf("\nThere is a new version available (v%s). Go to %s for more details.\n", latest, RepoUrl))
 		fmt.Println(message)
 	}

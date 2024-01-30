@@ -82,10 +82,10 @@ func generateKey(privateKey *ecdsa.PrivateKey) *bytes.Buffer {
 
 func writeToFile(content *bytes.Buffer) *os.File {
 	file, err := os.CreateTemp("", TempFilePattern)
+	defer file.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = file.Write(content.Bytes())
-	_ = file.Close()
+	_, _ = file.Write(content.Bytes())
 	return file
 }

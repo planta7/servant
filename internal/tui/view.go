@@ -3,8 +3,6 @@
 
 package tui
 
-import "github.com/planta7/serve/internal/styles"
-
 func (m Model) View() string {
-	return styles.AppStyle.Render(m.list.View())
+	return AppStyle.Render(m.list.View())
 }

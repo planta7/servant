@@ -7,7 +7,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/planta7/serve/internal/styles"
 )
 
 type item struct {
@@ -68,7 +67,7 @@ func NewModel(info string) Model {
 	delegate := newItemDelegate(delegateKeys)
 	requestList := list.New([]list.Item{}, delegate, 0, 0)
 	requestList.Title = info
-	requestList.Styles.Title = styles.TitleStyle
+	requestList.Styles.Title = TitleStyle
 	requestList.AdditionalFullHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			listKeys.toggleSpinner,
