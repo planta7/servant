@@ -53,7 +53,7 @@ You can download the latest release binaries available in the
 > is a new version of `serve`.
 
 #### Package manager
-In macOS/Windows environments you can install `serve` using [Homebrew](https://brew.sh):
+In macOS/Linux environments you can install `serve` using [Homebrew](https://brew.sh):
 
 ```shell
 brew install planta7/tap/serve

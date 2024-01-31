@@ -34,7 +34,7 @@ similar issue doesn't already exist. Assuming no existing issues exist, please e
 information when submitting the issue to ensure I can quickly reproduce your issue:
 
 * Version used
-* Platform (Linux, macOS, Windows)
+* Platform (Linux, macOS)
 * The complete command that was executed
 * Any output from the command
 * The logs and dumps of execution for bugs report
