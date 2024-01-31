@@ -68,7 +68,7 @@ $ go build
 ```
 
 > **Note**
-> Requires GO >= 1.19
+> Requires GO >= 1.20
 
 
 ### Usage
