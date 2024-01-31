@@ -15,7 +15,6 @@ import (
 	"github.com/planta7/serve/internal/manager"
 	"github.com/planta7/serve/internal/network"
 	"github.com/planta7/serve/internal/tui"
-	"io"
 	"net"
 	"net/http"
 	"os"
@@ -28,29 +27,63 @@ import (
 
 const fileServerCss = `
 	<style>
-		pre {
-			white-space:normal;
-			font-family: Courier New;
+		* {
+			color: darkslategray;
+		}
+
+		body {
+			font-family: Trebuchet MS;
 			padding: 20px;
 		}
-		pre a {
+
+		body > a:first-child {
 			display: block;
-			color: DarkSlateGray;
-			margin-bottom: 5px;
+			margin-bottom: 40px;
 		}
-		pre a:before {
-			display: inline-block;
-			padding-right: 3px;
-			vertical-align: middle;
+
+		table {
+			border-collapse: collapse;
 		}
-		pre a[href$="/"] {
+
+		tr:first-child td {
+			font-weight: 600;
+			font-family: inherit;
+			border-bottom: 10px solid transparent;
+			padding-bottom: 10px;
+		}
+
+		tr td:last-child {
+			padding-left: 80px;
+		}
+
+		tr {
+			height: 30px;
+			border-bottom: 1px solid gainsboro;
+		}
+
+		tr a[href$="/"] {
 			font-weight: 600;
 		}
-		pre a[href$="/"]:before {
-			content: "[D]";
+
+		td:nth-child(1), td:nth-child(2) {  
+			font-family: 'Courier New';
 		}
-		pre a:not([href$="/"]):before {
-			content: "[F]";
+
+		td:nth-child(1) {
+			width: 35px;
+		}
+
+		td:nth-child(2) {
+			width: 600px;
+		}
+
+		td:nth-child(3) {
+			width: 100px;
+			text-align: right;
+		}
+
+		td:nth-child(4) {
+			width: 290px;
 		}
 	</style>
 	`
@@ -111,7 +144,7 @@ func NewServer(config ServerRequest) *Server {
 
 func (s *Server) Start() {
 	fullAddress := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
-	fileServer := http.FileServer(http.Dir(s.config.Path))
+	fileServer := FileServer(http.Dir(s.config.Path))
 	mux := http.NewServeMux()
 	mux.Handle("/", s.handleRequest(fileServer))
 
@@ -261,9 +294,6 @@ func (s *Server) handleRequest(h http.Handler) http.Handler {
 			w.Header().Set(network.AccessControlAllowMethods, "*")
 		}
 		h.ServeHTTP(lrw, r)
-		if s.isDirectoryListing(r.URL.Path) {
-			_, _ = io.WriteString(w, fileServerCss)
-		}
 		duration := time.Since(start)
 		contentType := w.Header().Get(network.ContentType)
 		stringContentLength := w.Header().Get(network.ContentLength)
@@ -314,8 +344,4 @@ func (s *Server) handleBasicAuth(next http.Handler) http.Handler {
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})
-}
-
-func (s *Server) isDirectoryListing(path string) bool {
-	return path[len(path)-1] == '/'
 }
