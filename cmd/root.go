@@ -1,3 +1,6 @@
+// MIT Licensed
+// Copyright (c) 2023 Roberto García <roberto@planta7.io>
+
 package cmd
 
 import (
@@ -11,11 +14,13 @@ import (
 	"strings"
 )
 
-var cfgFile string
-var verbose bool
-
 const (
 	EnvPrefix = "SERVE"
+)
+
+var (
+	cfgFile string
+	verbose bool
 )
 
 var rootCmd = &cobra.Command{

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var request = &local.ServerRequest{}
+var lRequest = &local.ServerRequest{}
 
 var localCmd = &cobra.Command{
 	Use:     "local [path]",
@@ -16,7 +16,7 @@ var localCmd = &cobra.Command{
 	Short:   "Start a local HTTP server",
 	Args:    cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		request.Path = "./"
+		lRequest.Path = "./"
 
 		var parsedFlags []string
 		cmd.Flags().Visit(func(f *pflag.Flag) {
@@ -25,25 +25,27 @@ var localCmd = &cobra.Command{
 
 		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 		if len(args) > 0 {
-			request.Path = args[0]
+			lRequest.Path = args[0]
 		}
 
-		server := local.NewServer(*request)
+		server := local.NewServer(*lRequest)
 		server.Start()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(localCmd)
-	localCmd.Flags().StringVarP(&request.Host, "host", "", "", "Server host (default is empty)")
-	localCmd.Flags().IntVarP(&request.Port, "port", "p", 0, "Listen on port (default is random)")
-	localCmd.Flags().BoolVarP(&request.CORS, "cors", "c", false, "Enable CORS (default is false)")
-	localCmd.Flags().BoolVarP(&request.Launch, "launch", "l", false, "Launch default browser (default is false)")
-	localCmd.Flags().StringVarP(&request.Auth, "auth", "", "", "username:password for basic auth (default is empty)")
-	localCmd.Flags().BoolVarP(&request.TLS.Auto, "auto-tls", "", false, "Start with embedded certificate (default is false)")
-	localCmd.Flags().StringVarP(&request.TLS.CertFile, "cert-file", "", "", "Path to certificate (default is empty)")
-	localCmd.Flags().StringVarP(&request.TLS.KeyFile, "key-file", "", "", "Path to key")
-	localCmd.Flags().BoolVarP(&request.DisableTUI, "disable-tui", "", false, "Disable TUI")
+	localCmd.Flags().StringVarP(&lRequest.Host, "host", "", "", "Server host (default is empty)")
+	localCmd.Flags().IntVarP(&lRequest.Port, "port", "p", 0, "Listen on port (default is random)")
+	localCmd.Flags().BoolVarP(&lRequest.Expose, "expose", "e", false, "Expose through localtunnel (default is false)")
+	localCmd.Flags().BoolVarP(&lRequest.CORS, "cors", "c", false, "Enable CORS (default is false)")
+	localCmd.Flags().BoolVarP(&lRequest.Launch, "launch", "l", false, "Launch default browser (default is false)")
+	localCmd.Flags().StringVarP(&lRequest.Auth, "auth", "", "", "username:password for basic auth (default is empty)")
+	localCmd.Flags().BoolVarP(&lRequest.TLS.Auto, "auto-tls", "", false, "Start with embedded certificate (default is false)")
+	localCmd.Flags().StringVarP(&lRequest.TLS.CertFile, "cert-file", "", "", "Path to certificate (default is empty)")
+	localCmd.Flags().StringVarP(&lRequest.TLS.KeyFile, "key-file", "", "", "Path to key")
+	localCmd.Flags().BoolVarP(&lRequest.DisableTUI, "disable-tui", "", false, "Disable TUI")
 	localCmd.MarkFlagsRequiredTogether("cert-file", "key-file")
 	localCmd.MarkFlagsMutuallyExclusive("auto-tls", "cert-file")
+	localCmd.MarkFlagsMutuallyExclusive("expose", "cors", "auto-tls", "cert-file", "key-file")
 }

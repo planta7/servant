@@ -11,6 +11,7 @@ import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
+	"github.com/localtunnel/go-localtunnel"
 	"github.com/planta7/serve/internal"
 	"github.com/planta7/serve/internal/manager"
 	"github.com/planta7/serve/internal/network"
@@ -93,6 +94,7 @@ type ServerRequest struct {
 	Host       string
 	TLS        TLSRequest
 	Port       int
+	Expose     bool
 	CORS       bool
 	Launch     bool
 	Auth       string
@@ -148,11 +150,23 @@ func (s *Server) Start() {
 	mux := http.NewServeMux()
 	mux.Handle("/", s.handleRequest(fileServer))
 
-	listener, err := net.Listen("tcp", fullAddress)
-	if err != nil {
-		log.Debug("net.Listen error", "error", fmt.Sprintf("%#v", err))
-		if oErr, ok := err.(*net.OpError); ok {
-			log.Fatal(oErr.Err.Error())
+	var listener net.Listener
+	var err error
+	if s.config.Expose {
+		listener, err = localtunnel.Listen(localtunnel.Options{
+			Log: log.StandardLog(),
+		})
+		if err != nil {
+			log.Debug("localtunnel.Listen error", "error", fmt.Sprintf("%#v", err))
+			log.Fatal("Error creating listener for Localtunnel", "error", err.Error())
+		}
+	} else {
+		listener, err = net.Listen("tcp", fullAddress)
+		if err != nil {
+			log.Debug("net.Listen error", "error", fmt.Sprintf("%#v", err))
+			if oErr, ok := err.(*net.OpError); ok {
+				log.Fatal(oErr.Err.Error())
+			}
 		}
 	}
 	server := &http.Server{
@@ -248,7 +262,9 @@ func (s *Server) resolveServerConfiguration(listener net.Listener) {
 		port = listener.Addr().(*net.TCPAddr).Port
 	}
 	var hosts []string
-	if s.config.Host == "" {
+	if s.config.Expose {
+		hosts = append(hosts, listener.Addr().String())
+	} else if s.config.Host == "" {
 		localIP, _ := network.LocalIP()
 		hosts = append(hosts, fmt.Sprintf("127.0.0.1:%d", port))
 		hosts = append(hosts, fmt.Sprintf("%s:%d", localIP.String(), port))
