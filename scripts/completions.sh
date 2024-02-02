@@ -6,5 +6,5 @@ set -e
 rm -rf completions
 mkdir completions
 for sh in bash zsh fish; do
-	go run main.go completion "$sh" > "completions/servant.$sh"
+	go run cmd/servant/main.go completion "$sh" > "completions/servant.$sh"
 done
