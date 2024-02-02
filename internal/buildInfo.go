@@ -15,10 +15,10 @@ func (b *BuildInfo) GetShortCommit() string {
 	return b.Commit
 }
 
-var ServeInfo *BuildInfo
+var ServantInfo *BuildInfo
 
 func SetBuildInfo(version string, commit string) {
-	ServeInfo = &BuildInfo{
+	ServantInfo = &BuildInfo{
 		Version: version,
 		Commit:  commit,
 	}

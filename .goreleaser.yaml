@@ -32,21 +32,21 @@ changelog:
       - '^docs:'
       - '^test:'
 brews:
-  - name: serve
+  - name: servant
     tap:
       owner: planta7
       name: homebrew-tap
-    url_template: "https://github.com/planta7/serve/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://github.com/planta7/servant/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: goreleaserbot
       email: bot@goreleaser.com
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    homepage: "https://github.com/planta7/serve"
+    homepage: "https://github.com/planta7/servant"
     description: "Create a local server from any location on your computer (soon you will be able to expose it to the Internet as well ;))"
     license: "MIT"
     install: |
-      bin.install "serve"
-      bash_completion.install "completions/serve.bash" => "serve"
-      zsh_completion.install "completions/serve.zsh" => "_serve"
-      fish_completion.install "completions/serve.fish"
-    caveats: "Thanks for installing serve!"
+      bin.install "servant"
+      bash_completion.install "completions/servant.bash" => "_servant"
+      zsh_completion.install "completions/servant.zsh" => "_servant"
+      fish_completion.install "completions/servant.fish"
+    caveats: "Thanks for installing servant!"

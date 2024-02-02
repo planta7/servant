@@ -9,8 +9,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/manager"
-	"github.com/planta7/serve/internal/network"
+	"github.com/planta7/servant/internal/manager"
+	"github.com/planta7/servant/internal/network"
 	"io"
 	"net/http"
 	"strconv"
@@ -130,7 +130,7 @@ func (ph *proxyHandler) Handle(_ http.Handler) http.Handler {
 		if err != nil {
 			log.Error("Error proxying request request", err.Error())
 			if errors.Is(err, syscall.ECONNREFUSED) {
-				errorMsg := fmt.Sprintf("SERVE: Connection to local port %d was refused, check that your server is up and running", ph.config.Port)
+				errorMsg := fmt.Sprintf("SERVANT: Connection to local port %d was refused, check that your server is up and running", ph.config.Port)
 				_, _ = w.Write([]byte(errorMsg))
 			}
 			return

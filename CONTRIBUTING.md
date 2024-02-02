@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-We'd love your contributions to `serve`. Please review the following guidelines before contributing. Also, feel free
+We'd love your contributions to `servant`. Please review the following guidelines before contributing. Also, feel free
 to propose changes to these guidelines by updating this file and submitting a pull request.
 
 * [I have a question...](#have-a-question)

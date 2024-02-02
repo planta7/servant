@@ -1,6 +1,6 @@
 Output demo.gif
 
-Require serve
+Require servant
 
 Set Shell "bash"
 Set FontSize 14
@@ -10,6 +10,6 @@ Set Framerate 60
 Set Padding 25
 
 Type "# Start a simple server in current directory and launch default browser" Sleep 500ms Enter
-Type "serve local -l" Sleep 500ms Enter
+Type "servant local -l" Sleep 500ms Enter
 
 Sleep 5s

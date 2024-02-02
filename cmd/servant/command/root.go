@@ -6,7 +6,7 @@ package command
 import (
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal"
+	"github.com/planta7/servant/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	EnvPrefix = "SERVE"
+	EnvPrefix = "SERVANT"
 )
 
 var (
@@ -25,12 +25,12 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "serve",
+	Use:   "servant",
 	Short: "Create an HTTP server in a jiffy",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		log.Info(fmt.Sprintf("serve %s (%s)",
-			internal.ServeInfo.Version,
-			internal.ServeInfo.GetShortCommit()))
+		log.Info(fmt.Sprintf("servant %s (%s)",
+			internal.ServantInfo.Version,
+			internal.ServantInfo.GetShortCommit()))
 		bindFlags(cmd)
 		if verbose {
 			log.SetLevel(log.DebugLevel)
@@ -48,7 +48,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./serve and $HOME/.serve)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./servant and $HOME/.servant)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode (default is false)")
 	rootCmd.PersistentFlags().BoolVarP(&disableTUI, "disable-tui", "", false, "Disable TUI (default is false)")
 	viper.SetDefault("disable-tui", false)
@@ -64,7 +64,7 @@ func initConfig() {
 		viper.AddConfigPath(".")
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".serve")
+		viper.SetConfigName(".servant")
 	}
 
 	viper.SetEnvPrefix(EnvPrefix)

@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal"
-	"github.com/planta7/serve/internal/manager"
+	"github.com/planta7/servant/internal"
+	"github.com/planta7/servant/internal/manager"
 	"net"
 	"net/http"
 	"os"
@@ -57,14 +57,15 @@ type Server interface {
 	Start(server *http.Server, listener net.Listener) error
 }
 
-type Serve struct {
-	config   Configuration
-	mux      *http.ServeMux
-	listener net.Listener
-	server   Server
+type Servant struct {
+	config    Configuration
+	mux       *http.ServeMux
+	listener  net.Listener
+	server    Server
+	addresses []string
 }
 
-func New(config Configuration) *Serve {
+func New(config Configuration) *Servant {
 	var output manager.OutputManager
 	if config.DisableTUI {
 		log.Debug("Using Log output")
@@ -98,15 +99,16 @@ func New(config Configuration) *Serve {
 
 	output.Init(config.Path, addresses)
 
-	return &Serve{
-		config:   config,
-		mux:      mux,
-		listener: listener,
-		server:   server,
+	return &Servant{
+		config:    config,
+		mux:       mux,
+		listener:  listener,
+		server:    server,
+		addresses: addresses,
 	}
 }
 
-func (s *Serve) Start() {
+func (s *Servant) Start() {
 	server := &http.Server{
 		Addr:    s.listener.Addr().String(),
 		Handler: s.mux,
@@ -120,8 +122,8 @@ func (s *Serve) Start() {
 	shutdown(context.Background(), server)
 }
 
-func (s *Serve) start(server *http.Server) {
-	address := s.listener.Addr().String()
+func (s *Servant) start(server *http.Server) {
+	address := s.addresses[0]
 	if s.config.Launch {
 		log.Debug("Launching default browser", "url", address)
 		err := internal.LaunchBrowser(address)
@@ -129,7 +131,6 @@ func (s *Serve) start(server *http.Server) {
 			log.Warn("Failed to launch", "error", err.Error())
 		}
 	}
-
 	err := s.server.Start(server, s.listener)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Debug("Server closed")

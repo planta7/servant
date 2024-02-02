@@ -6,7 +6,7 @@ package server
 import (
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/network"
+	"github.com/planta7/servant/internal/network"
 	"net"
 	"net/http"
 )

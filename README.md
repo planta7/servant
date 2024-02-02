@@ -1,22 +1,22 @@
 <h1 align="center">
   <br>
-  <img src="./assets/logo.png" alt="serve" width="100">
+  <img src="./assets/logo.png" alt="servant" width="100">
   <br>
-  serve
+  servant
   <br>
 </h1>
 
 <h4 align="center">Easily expose any content on your<br/>computer through a local web server.</h4>
 
 <p align="center">
-  <a href="https://github.com/planta7/serve/actions/workflows/ci.yaml">
-    <img src="https://github.com/planta7/serve/actions/workflows/ci.yaml/badge.svg" alt="CI badge">
+  <a href="https://github.com/planta7/servant/actions/workflows/ci.yaml">
+    <img src="https://github.com/planta7/servant/actions/workflows/ci.yaml/badge.svg" alt="CI badge">
   </a>
-  <a href="https://github.com/planta7/serve/actions/workflows/release.yaml">
-    <img src="https://github.com/planta7/serve/actions/workflows/release.yaml/badge.svg" alt="Release badge">
+  <a href="https://github.com/planta7/servant/actions/workflows/release.yaml">
+    <img src="https://github.com/planta7/servant/actions/workflows/release.yaml/badge.svg" alt="Release badge">
   </a>
-  <a href="https://pkg.go.dev/github.com/planta7/serve">
-    <img src="https://pkg.go.dev/badge/github.com/planta7/serve.svg" alt="GO pkg badge">
+  <a href="https://pkg.go.dev/github.com/planta7/servant">
+    <img src="https://pkg.go.dev/badge/github.com/planta7/servant.svg" alt="GO pkg badge">
   </a>
 </p>
 
@@ -46,24 +46,24 @@
 
 #### Manual install
 You can download the latest release binaries available in the
-[releases section](https://github.com/planta7/serve/releases/latest) of the repository.
+[releases section](https://github.com/planta7/servant/releases/latest) of the repository.
 
 > **Warning**
 > Keep in mind that if you install it manually, you will not have the ability to update automatically when there
-> is a new version of `serve`.
+> is a new version of `servant`.
 
 #### Package manager
-In macOS/Linux environments you can install `serve` using [Homebrew](https://brew.sh):
+In macOS/Linux environments you can install `servant` using [Homebrew](https://brew.sh):
 
 ```shell
-brew install planta7/tap/serve
+brew install planta7/tap/servant
 ```
 
 #### Install from sources
 
 ```shell
-$ git clone https://www.github.com/planta7/serve.git
-$ cd serve
+$ git clone https://www.github.com/planta7/servant.git
+$ cd servant
 $ go build
 ```
 
@@ -74,12 +74,12 @@ $ go build
 ### Usage
 ---
 
-To start a server in the current path, simply run `$ serve local`. In addition to the _TL;DR_ execution,
+To start a server in the current path, simply run `$ servant local`. In addition to the _TL;DR_ execution,
 there are also a number of options that you can configure to suit your needs:
 
 ```shell
 Usage:
-  serve local [path] [flags]
+  servant local [path] [flags]
 
 Aliases:
   local, l
@@ -97,7 +97,7 @@ Flags:
       --disable--tui       Launch without TUI
 
 Global Flags:
-      --config string   config file (default is ./serve and $HOME/.serve)
+      --config string   config file (default is ./servant and $HOME/.servant)
   -v, --verbose         verbose mode (default is false)
 ```
 
@@ -106,31 +106,31 @@ Global Flags:
 To start a local server on port `8080` and automatically launch the system's default browser use the following command:
 
 ```shell
-serve local -p 8080 -l
+servant local -p 8080 -l
 ```
 
-`serve` will bind the server to the `loopback` address in addition to the private IP that is configured on the system's
+`servant` will bind the server to the `loopback` address in addition to the private IP that is configured on the system's
 default interface. If you want to bind the server to a specific IP, use the command:
 
 ```shell
-serve local --host 192.168.3.12
+servant local --host 192.168.3.12
 ```
 
 The above examples start an HTTP server, but if you need to launch an HTTPS server, you can easily do so by providing
 the certificate file and its key:
 
 ```shell
-serve local --cert-file /path/to/cert-file --key-file /path/to/key-file
+servant local --cert-file /path/to/cert-file --key-file /path/to/key-file
 ```
 
-Or if you prefer, you can let `serve` generate a self-signed certificate and key randomly at startup.
+Or if you prefer, you can let `servant` generate a self-signed certificate and key randomly at startup.
 
 ```shell
-serve local --auto-tls
+servant local --auto-tls
 ```
 
 If you are using embedded or self-signed certificates you will receive a security alert in the browser indicating that the
-certificate is not trusted, you can safely ignore the warning, or you can provide a valid certificate to `serve`.
+certificate is not trusted, you can safely ignore the warning, or you can provide a valid certificate to `servant`.
 
 Whatever the combination of parameters, `--verbose` or `-v` flag enables detailed output of what is happening on
 the server.
@@ -138,16 +138,16 @@ the server.
 > **Note**
 > Bonus tip! You can use flags in a more elegant way if you chain them together.
 > ```shell
-> serve local -clvp 8080
+> servant local -clvp 8080
 > # is equivalent to
-> serve local -c -l -v -p 8080
+> servant local -c -l -v -p 8080
 > # and
-> serve local --cors --launch --verbose --port 8080
+> servant local --cors --launch --verbose --port 8080
 > ```
 
 #### TUI
 
-I am developing a TUI (text user interface) for the next version of `serve`. This interface, besides presenting the
+I am developing a TUI (text user interface) for the next version of `servant`. This interface, besides presenting the
 information in a more attractive way, will also bring a lot of new functionalities for capturing and modifying server
 requests. Here's a sneak preview:
 
@@ -156,22 +156,22 @@ requests. Here's a sneak preview:
 ### Configuration
 ---
 
-You can configure `serve` using flags, but you also have other options:
+You can configure `servant` using flags, but you also have other options:
 
-+ `.serve` configuration file (here is an [example](.serve.sample))
++ `.servant` configuration file (here is an [example](.servant.sample))
   + Current directory (local)
   + `$HOME` directory (global)
   + Specified by the flag `--config`
 + Using environment variables
-  + `SERVE_AUTH`
-  + `SERVE_AUTO_TLS`
-  + `SERVE_CERT_FILE`
-  + `SERVE_CORS`
-  + `SERVE_HOST`
-  + `SERVE_KEY_FILE`
-  + `SERVE_LAUNCH`
-  + `SERVE_PORT`
-  + `SERVE_DISABLE_TUI`
+  + `SERVANT_AUTH`
+  + `SERVANT_AUTO_TLS`
+  + `SERVANT_CERT_FILE`
+  + `SERVANT_CORS`
+  + `SERVANT_HOST`
+  + `SERVANT_KEY_FILE`
+  + `SERVANT_LAUNCH`
+  + `SERVANT_PORT`
+  + `SERVANT_DISABLE_TUI`
 
 Priority for applying the value to parameters is as follows:
 
@@ -186,7 +186,7 @@ Priority for applying the value to parameters is as follows:
 The result will be a merge after applying the above order.
 
 > **Note**
-> You can check the value of the parameters by starting `serve` with `-v` or `--verbose`.
+> You can check the value of the parameters by starting `servant` with `-v` or `--verbose`.
 
 ### Want to contribute?
 ---

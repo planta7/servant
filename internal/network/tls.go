@@ -20,7 +20,7 @@ import (
 const (
 	TemplateCountry      = "ES"
 	TemplateOrg          = "planta7"
-	TemplateOrgUnit      = "serve"
+	TemplateOrgUnit      = "servant"
 	CertificateBlockType = "CERTIFICATE"
 	KeyBlockType         = "EC PRIVATE KEY"
 	TempFilePattern      = "auto-tls-*"

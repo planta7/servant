@@ -7,14 +7,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/tui"
+	"github.com/planta7/servant/internal/tui"
 	"io"
 	"net/http"
 )
 
 const (
-	RepoUrl     = "https://github.com/planta7/serve"
-	ReleasesUrl = "https://api.github.com/repos/planta7/serve/releases/latest"
+	RepoUrl     = "https://github.com/planta7/servant"
+	ReleasesUrl = "https://api.github.com/repos/planta7/servant/releases/latest"
 	TagKey      = "tag_name"
 )
 

@@ -38,7 +38,7 @@ If we verify a reported security vulnerability, our policy is:
 
 - A security advisory will be released detailing the vulnerability, as well as
   recommendations for end-users to protect themselves. Security advisories will 
-  be listed at https://github.com/planta7/serve/security/advisories.
+  be listed at https://github.com/planta7/servant/security/advisories.
 
 ## Attribution
 

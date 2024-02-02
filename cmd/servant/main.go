@@ -4,8 +4,8 @@
 package main
 
 import (
-	"github.com/planta7/serve/cmd/serve/command"
-	"github.com/planta7/serve/internal"
+	"github.com/planta7/servant/cmd/servant/command"
+	"github.com/planta7/servant/internal"
 )
 
 var (

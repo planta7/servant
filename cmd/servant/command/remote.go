@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal/server"
+	"github.com/planta7/servant/internal/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"strconv"
@@ -29,8 +29,8 @@ var remoteCmd = &cobra.Command{
 
 		log.Debug("Parameters", "args", args, "flags", parsedFlags)
 
-		serve := server.New(*rConfig)
-		serve.Start()
+		servant := server.New(*rConfig)
+		servant.Start()
 	},
 }
 

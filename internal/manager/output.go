@@ -7,8 +7,8 @@ import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/serve/internal"
-	"github.com/planta7/serve/internal/tui"
+	"github.com/planta7/servant/internal"
+	"github.com/planta7/servant/internal/tui"
 	"os"
 	"syscall"
 )
@@ -62,9 +62,9 @@ func (t *tuiOutput) Write(request *Request) {
 }
 
 func (t *tuiOutput) Init(path string, addresses []string) {
-	servingInfo := fmt.Sprintf("serve %s (%s)\nServing %s at %s",
-		internal.ServeInfo.Version,
-		internal.ServeInfo.GetShortCommit(),
+	servingInfo := fmt.Sprintf("servant %s (%s)\nServing %s at %s",
+		internal.ServantInfo.Version,
+		internal.ServantInfo.GetShortCommit(),
 		path,
 		addresses,
 	)
