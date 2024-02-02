@@ -1,7 +1,7 @@
 // MIT Licensed
 // Copyright (c) 2023 Roberto García <roberto@planta7.io>
 
-package local
+package server
 
 import (
 	"errors"
@@ -21,6 +21,69 @@ import (
 	"strings"
 	"time"
 )
+
+const fileServerCss = `
+	<style>
+		* {
+			color: darkslategray;
+		}
+
+		body {
+			font-family: Trebuchet MS;
+			padding: 20px;
+		}
+
+		body > a:first-child {
+			display: block;
+			margin-bottom: 40px;
+		}
+
+		table {
+			border-collapse: collapse;
+		}
+
+		tr:first-child td {
+			font-weight: 600;
+			font-family: inherit;
+			border-bottom: 10px solid transparent;
+			padding-bottom: 10px;
+		}
+
+		tr td:last-child {
+			padding-left: 80px;
+		}
+
+		tr {
+			height: 30px;
+			border-bottom: 1px solid gainsboro;
+		}
+
+		tr a[href$="/"] {
+			font-weight: 600;
+		}
+
+		td:nth-child(1), td:nth-child(2) {  
+			font-family: 'Courier New';
+		}
+
+		td:nth-child(1) {
+			width: 35px;
+		}
+
+		td:nth-child(2) {
+			width: 600px;
+		}
+
+		td:nth-child(3) {
+			width: 100px;
+			text-align: right;
+		}
+
+		td:nth-child(4) {
+			width: 290px;
+		}
+	</style>
+	`
 
 // The algorithm uses at most sniffLen bytes to make its decision.
 const sniffLen = 512

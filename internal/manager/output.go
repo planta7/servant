@@ -5,11 +5,16 @@ package manager
 
 import (
 	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
+	"github.com/planta7/serve/internal"
 	"github.com/planta7/serve/internal/tui"
+	"os"
+	"syscall"
 )
 
 type OutputManager interface {
+	Init(path string, addresses []string)
 	Write(request *Request)
 }
 
@@ -33,14 +38,16 @@ func (l *logOutput) Write(request *Request) {
 	log.Info(logLine)
 }
 
-type tuiOutput struct {
-	model *tui.Model
+func (l *logOutput) Init(path string, addresses []string) {
+	log.Info(fmt.Sprintf("Serving %s at %s", path, addresses))
 }
 
-func NewTuiOutput(model *tui.Model) OutputManager {
-	return &tuiOutput{
-		model: model,
-	}
+type tuiOutput struct {
+	model tui.Model
+}
+
+func NewTuiOutput() OutputManager {
+	return &tuiOutput{}
 }
 
 func (t *tuiOutput) Write(request *Request) {
@@ -52,6 +59,23 @@ func (t *tuiOutput) Write(request *Request) {
 	contentPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("%s %s", request.ContentType, contentLengthText))
 	description := fmt.Sprintf("%s %v %s", statusText, request.Time, contentPart)
 	t.model.Add(title, description)
+}
+
+func (t *tuiOutput) Init(path string, addresses []string) {
+	servingInfo := fmt.Sprintf("serve %s (%s)\nServing %s at %s",
+		internal.ServeInfo.Version,
+		internal.ServeInfo.GetShortCommit(),
+		path,
+		addresses,
+	)
+	t.model = tui.NewModel(servingInfo)
+	go func() {
+		if _, err := tea.NewProgram(t.model).Run(); err != nil {
+			log.Fatal("Error running TUI", "error", err.Error())
+		}
+		p, _ := os.FindProcess(os.Getpid())
+		_ = p.Signal(syscall.SIGTERM)
+	}()
 }
 
 func getContentLength(value uint64) string {

@@ -1,7 +1,7 @@
 // MIT Licensed
 // Copyright (c) 2023 Roberto García <roberto@planta7.io>
 
-package cmd
+package command
 
 import (
 	"fmt"
@@ -19,8 +19,9 @@ const (
 )
 
 var (
-	cfgFile string
-	verbose bool
+	cfgFile    string
+	verbose    bool
+	disableTUI bool
 )
 
 var rootCmd = &cobra.Command{
@@ -49,6 +50,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./serve and $HOME/.serve)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode (default is false)")
+	rootCmd.PersistentFlags().BoolVarP(&disableTUI, "disable-tui", "", false, "Disable TUI (default is false)")
+	viper.SetDefault("disable-tui", false)
 }
 
 func initConfig() {

@@ -4,7 +4,7 @@
 package main
 
 import (
-	"github.com/planta7/serve/cmd"
+	"github.com/planta7/serve/cmd/serve/command"
 	"github.com/planta7/serve/internal"
 )
 
@@ -15,6 +15,6 @@ var (
 
 func main() {
 	internal.SetBuildInfo(version, commit)
-	cmd.Execute()
+	command.Execute()
 	internal.CheckForUpdates(version)
 }
