@@ -4,7 +4,8 @@ before:
     - rm -rf dist/
     - ./scripts/completions.sh
 builds:
-  - env:
+  - main: ./cmd/servant
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -19,8 +20,7 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     files:
-    - completions/*
-    rlcp: true
+      - completions/*
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -33,7 +33,7 @@ changelog:
       - '^test:'
 brews:
   - name: servant
-    tap:
+    repository:
       owner: planta7
       name: homebrew-tap
     url_template: "https://github.com/planta7/servant/releases/download/{{ .Tag }}/{{ .ArtifactName }}"

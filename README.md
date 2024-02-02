@@ -64,7 +64,7 @@ brew install planta7/tap/servant
 ```shell
 $ git clone https://www.github.com/planta7/servant.git
 $ cd servant
-$ go build
+$ go build ./...
 ```
 
 > **Note**
