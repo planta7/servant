@@ -1,7 +1,7 @@
 // MIT Licensed
 // Copyright (c) 2023 Roberto García <roberto@planta7.io>
 
-package manager
+package server
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"syscall"
 )
 
-type OutputManager interface {
+type Output interface {
 	Init(path string, addresses []string)
 	Write(request *Request)
 }
@@ -21,7 +21,7 @@ type OutputManager interface {
 type logOutput struct {
 }
 
-func NewLogOutput() OutputManager {
+func NewLogOutput() Output {
 	return &logOutput{}
 }
 
@@ -46,7 +46,7 @@ type tuiOutput struct {
 	model tui.Model
 }
 
-func NewTuiOutput() OutputManager {
+func NewTuiOutput() Output {
 	return &tuiOutput{}
 }
 

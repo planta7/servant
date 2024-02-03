@@ -1,7 +1,7 @@
 // MIT Licensed
 // Copyright (c) 2023 Roberto García <roberto@planta7.io>
 
-package manager
+package server
 
 import (
 	"io"
@@ -20,19 +20,19 @@ type Request struct {
 	// TODO: headers
 }
 
-type RequestManager struct {
+type Requests struct {
 	requests []*Request
 }
 
-func NewRequestManager() *RequestManager {
-	return &RequestManager{requests: []*Request{}}
+func NewRequestManager() *Requests {
+	return &Requests{requests: []*Request{}}
 }
 
-func (m *RequestManager) Add(request *Request) {
+func (m *Requests) Add(request *Request) {
 	m.requests = append(m.requests, request)
 }
 
-func (m *RequestManager) Find(url string) *Request {
+func (m *Requests) Find(url string) *Request {
 	for _, r := range m.requests {
 		if r.Url == url {
 			return r

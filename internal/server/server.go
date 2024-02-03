@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/planta7/servant/internal"
-	"github.com/planta7/servant/internal/manager"
 	"net"
 	"net/http"
 	"os"
@@ -66,13 +65,13 @@ type Servant struct {
 }
 
 func New(config Configuration) *Servant {
-	var output manager.OutputManager
+	var output Output
 	if config.DisableTUI {
 		log.Debug("Using Log output")
-		output = manager.NewLogOutput()
+		output = NewLogOutput()
 	} else {
 		log.Debug("Using TUI output")
-		output = manager.NewTuiOutput()
+		output = NewTuiOutput()
 	}
 
 	var server Server
