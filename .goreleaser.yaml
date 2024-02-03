@@ -9,6 +9,7 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
+      - windows
       - darwin
 archives:
   - format: tar.gz
@@ -19,6 +20,9 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
     files:
       - completions/*
 checksum:
@@ -42,7 +46,7 @@ brews:
       email: bot@goreleaser.com
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     homepage: "https://github.com/planta7/servant"
-    description: "Create a local server from any location on your computer (soon you will be able to expose it to the Internet as well ;))"
+    description: "Create a local server from any location on your computer, expose it to the Internet or keep it local (you can also use it to expose any server ;))"
     license: "MIT"
     install: |
       bin.install "servant"
