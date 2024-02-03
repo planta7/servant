@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/charmbracelet/log"
-	"github.com/planta7/servant/internal/manager"
 	"github.com/planta7/servant/internal/network"
 	"io"
 	"net/http"
@@ -25,15 +24,15 @@ type RequestHandler interface {
 
 type localHandler struct {
 	config   Configuration
-	requests *manager.RequestManager
-	output   manager.OutputManager
+	requests *Requests
+	output   Output
 }
 
-func newLocalHandler(config Configuration, output manager.OutputManager) RequestHandler {
+func newLocalHandler(config Configuration, output Output) RequestHandler {
 	return &localHandler{
 		config:   config,
 		output:   output,
-		requests: manager.NewRequestManager(),
+		requests: NewRequestManager(),
 	}
 }
 
@@ -46,25 +45,7 @@ func (lh *localHandler) Handle(h http.Handler) http.Handler {
 			w.Header().Set(network.AccessControlAllowMethods, "*")
 		}
 		h.ServeHTTP(lrw, r)
-		duration := time.Since(start)
-		contentType := w.Header().Get(network.ContentType)
-		stringContentLength := w.Header().Get(network.ContentLength)
-		contentLength, _ := strconv.ParseInt(stringContentLength, 10, 64)
-		unsignedContentLength := uint64(contentLength)
-
-		request := &manager.Request{
-			RemoteAddress: r.RemoteAddr,
-			Url:           r.RequestURI,
-			Method:        r.Method,
-			Status:        lrw.StatusCode,
-			Time:          &duration,
-			Body:          &r.Body,
-			ContentType:   contentType,
-			ContentLength: unsignedContentLength,
-		}
-		// TODO: channels
-		lh.requests.Add(request)
-		lh.output.Write(request)
+		logRequest(start, w, r, lrw, lh.requests, lh.output)
 	})
 
 	if lh.config.Auth != "" {
@@ -104,12 +85,12 @@ type proxyHandler struct {
 	client *http.Client
 }
 
-func newProxyHandler(config Configuration, output manager.OutputManager) RequestHandler {
+func newProxyHandler(config Configuration, output Output) RequestHandler {
 	return &proxyHandler{
 		localHandler: localHandler{
 			config:   config,
 			output:   output,
-			requests: manager.NewRequestManager(),
+			requests: NewRequestManager(),
 		},
 		client: http.DefaultClient,
 	}
@@ -147,24 +128,35 @@ func (ph *proxyHandler) Handle(_ http.Handler) http.Handler {
 			return
 		}
 
-		duration := time.Since(start)
-		contentType := w.Header().Get(network.ContentType)
-		stringContentLength := w.Header().Get(network.ContentLength)
-		contentLength, _ := strconv.ParseInt(stringContentLength, 10, 64)
-		unsignedContentLength := uint64(contentLength)
-
-		request := &manager.Request{
-			RemoteAddress: r.RemoteAddr,
-			Url:           r.RequestURI,
-			Method:        r.Method,
-			Status:        lrw.StatusCode,
-			Time:          &duration,
-			Body:          &r.Body,
-			ContentType:   contentType,
-			ContentLength: unsignedContentLength,
-		}
-		// TODO: channels
-		ph.requests.Add(request)
-		ph.output.Write(request)
+		logRequest(start, w, r, lrw, ph.requests, ph.output)
 	})
+}
+
+func logRequest(
+	start time.Time,
+	w http.ResponseWriter,
+	r *http.Request,
+	lrw *network.LoggingResponseWriter,
+	requests *Requests,
+	output Output,
+) {
+	duration := time.Since(start)
+	contentType := w.Header().Get(network.ContentType)
+	stringContentLength := w.Header().Get(network.ContentLength)
+	contentLength, _ := strconv.ParseInt(stringContentLength, 10, 64)
+	unsignedContentLength := uint64(contentLength)
+
+	request := &Request{
+		RemoteAddress: r.RemoteAddr,
+		Url:           r.RequestURI,
+		Method:        r.Method,
+		Status:        lrw.StatusCode,
+		Time:          &duration,
+		Body:          &r.Body,
+		ContentType:   contentType,
+		ContentLength: unsignedContentLength,
+	}
+	// TODO: channels
+	requests.Add(request)
+	output.Write(request)
 }

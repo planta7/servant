@@ -25,13 +25,13 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 		case tea.KeyMsg:
 			switch {
 			case key.Matches(msg, keys.choose):
-				return m.NewStatusMessage(StatusMessageStyle("You chose " + title))
+				return m.NewStatusMessage(StatusMessageStyle("[not implemented] showing details of " + title))
 
 			case key.Matches(msg, keys.edit):
 				if len(m.Items()) == 0 {
 					keys.edit.SetEnabled(false)
 				}
-				return m.NewStatusMessage(StatusMessageStyle("(dummy) Editing " + title))
+				return m.NewStatusMessage(StatusMessageStyle("[not implemented] editing " + title))
 			}
 		}
 

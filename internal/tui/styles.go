@@ -5,7 +5,6 @@ package tui
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"math"
 	"strconv"
 )
 
@@ -17,7 +16,7 @@ var (
 	NewVersionStyle = Family2xx
 
 	AppStyle           = lipgloss.NewStyle().Padding(1, 2)
-	TitleStyle         = lipgloss.NewStyle().MaxWidth(math.MaxInt).Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#ECFD65"})
+	TitleStyle         = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#ECFD65"})
 	StatusMessageStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "#8E8E8E", Dark: "#747373"}).Render
 	SecondaryTextStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "#9B9B9B", Dark: "#5C5C5C"})
 )

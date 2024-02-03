@@ -10,7 +10,9 @@ import (
 	"github.com/planta7/servant/internal"
 	"github.com/planta7/servant/internal/tui"
 	"os"
+	"strings"
 	"syscall"
+	"time"
 )
 
 type Output interface {
@@ -39,7 +41,8 @@ func (l *logOutput) Write(request *Request) {
 }
 
 func (l *logOutput) Init(path string, addresses []string) {
-	log.Info(fmt.Sprintf("Serving %s at %s", path, addresses))
+	addrs := strings.Join(addresses, ", ")
+	log.Info(fmt.Sprintf("Serving %s at %s", path, addrs))
 }
 
 type tuiOutput struct {
@@ -53,7 +56,7 @@ func NewTuiOutput() Output {
 func (t *tuiOutput) Write(request *Request) {
 	statusText := tui.GetStyle(request.Status)
 	contentLengthText := getContentLength(request.ContentLength)
-	remoteAddressPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("from %s", request.RemoteAddress))
+	remoteAddressPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("from %s at %s", request.RemoteAddress, time.Now().Format(time.TimeOnly)))
 	title := fmt.Sprintf("%s %s %s", request.Method, request.Url, remoteAddressPart)
 
 	contentPart := tui.SecondaryTextStyle.Render(fmt.Sprintf("%s %s", request.ContentType, contentLengthText))
@@ -62,11 +65,12 @@ func (t *tuiOutput) Write(request *Request) {
 }
 
 func (t *tuiOutput) Init(path string, addresses []string) {
+	addrs := strings.Join(addresses, ", ")
 	servingInfo := fmt.Sprintf("servant %s (%s)\nServing %s at %s",
 		internal.ServantInfo.Version,
 		internal.ServantInfo.GetShortCommit(),
 		path,
-		addresses,
+		addrs,
 	)
 	t.model = tui.NewModel(servingInfo)
 	go func() {
