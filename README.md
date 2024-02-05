@@ -6,7 +6,8 @@
   <br>
 </h1>
 
-<h4 align="center">Easily expose any content on your<br/>computer through a local web server.</h4>
+<h4 align="center">Easily create a local server for your files<br/>and expose it to the internet through localtunnel.</h4>
+<h4 align="center">You can also expose any server running locally ;)</h4>
 
 <p align="center">
   <a href="https://github.com/planta7/servant/actions/workflows/ci.yaml">
@@ -29,22 +30,24 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](assets/demo.gif)
+![screenshot](assets/servant.png)
 
 ### Key features
 
-+ Create a local HTTP server from any directory
++ Create a local HTTP server from any directory and expose it to Internet
++ Expose any server already running locally
++ Linux, MacOS and Windows binaries
 + Bind any local address to the server
 + Customize it with global or configuration files, environment variables or flags
 + Support for basic authentication
 + TLS support with optional embedded certificate
 + Configure CORS with a simple flag
-+ Supercharged [TUI](#tui) with advanced features
++ Supercharged TUI with advanced features
 
 ### Installation
 ---
 
-#### Manual install
+#### Manual installation
 You can download the latest release binaries available in the
 [releases section](https://github.com/planta7/servant/releases/latest) of the repository.
 
@@ -70,6 +73,8 @@ $ go build ./...
 > **Note**
 > Requires GO >= 1.20
 
+#### Binaries
+You can download the binaries from the [releases](https://github.com/planta7/servant/releases) page, currently this is the only way to install it on Windows systems.
 
 ### Usage
 ---
@@ -89,17 +94,23 @@ Flags:
       --auto-tls           Start with embedded certificate (default is false)
       --cert-file string   Path to certificate (default is empty)
   -c, --cors               Enable CORS (default is false)
+  -e, --expose             Expose through localtunnel (default is false)
+  -s, --subdomain          Subdomain (default is random)
   -h, --help               help for local
       --host string        Server host (default is empty)
-      --key-file string    Path to key (default is empty)
-  -l, --launch             Launch default browser  (default is false)
+      --key-file string    Path to key
+  -l, --launch             Launch default browser (default is false)
   -p, --port int           Listen on port (default is random)
-      --disable--tui       Launch without TUI
 
 Global Flags:
       --config string   config file (default is ./servant and $HOME/.servant)
+      --disable-tui     Disable TUI (default is false)
   -v, --verbose         verbose mode (default is false)
 ```
+
+> [!IMPORTANT]
+> There is also the powerful remote command that allows you to expose a local server in the same way you do with ngrok
+> and for which I have not yet been able to write documentation. You can see all the options by running `server remote -h`.
 
 #### Examples
 
@@ -135,8 +146,8 @@ certificate is not trusted, you can safely ignore the warning, or you can provid
 Whatever the combination of parameters, `--verbose` or `-v` flag enables detailed output of what is happening on
 the server.
 
-> **Note**
-> Bonus tip! You can use flags in a more elegant way if you chain them together.
+> [!NOTE]
+> **Bonus tip!** You can use flags in a more elegant way if you chain them together.
 > ```shell
 > servant local -clvp 8080
 > # is equivalent to
@@ -144,14 +155,6 @@ the server.
 > # and
 > servant local --cors --launch --verbose --port 8080
 > ```
-
-#### TUI
-
-I am developing a TUI (text user interface) for the next version of `servant`. This interface, besides presenting the
-information in a more attractive way, will also bring a lot of new functionalities for capturing and modifying server
-requests. Here's a sneak preview:
-
-![TUI console](assets/tui.png)
 
 ### Configuration
 ---
@@ -167,11 +170,13 @@ You can configure `servant` using flags, but you also have other options:
   + `SERVANT_AUTO_TLS`
   + `SERVANT_CERT_FILE`
   + `SERVANT_CORS`
+  + `SERVANT_DISABLE_TUI`
+  + `SERVANT_EXPOSE`
   + `SERVANT_HOST`
   + `SERVANT_KEY_FILE`
   + `SERVANT_LAUNCH`
   + `SERVANT_PORT`
-  + `SERVANT_DISABLE_TUI`
+  + `SERVANT_SUBDOMAIN`
 
 Priority for applying the value to parameters is as follows:
 
