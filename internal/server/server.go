@@ -28,6 +28,7 @@ type Configuration struct {
 	Type       Type
 	Path       string
 	Host       string
+	Subdomain  string
 	TLS        TLSRequest
 	Port       int
 	Expose     bool
@@ -77,7 +78,9 @@ func New(config Configuration) *Servant {
 	var server Server
 	var handler RequestHandler
 	var httpHandler Handler
+	var location string
 	if config.Type == TypeLocal {
+		location = config.Path
 		httpHandler = FileServer(http.Dir(config.Path))
 		server = newLocal(config)
 		handler = newLocalHandler(config, output)
@@ -85,18 +88,17 @@ func New(config Configuration) *Servant {
 			server = newRemote(config)
 		}
 	} else {
+		location = fmt.Sprintf("port %d", config.Port)
 		server = newRemote(config)
 		handler = newProxyHandler(config, output)
 	}
 	mux, listener, addresses, err := server.Init(handler, httpHandler)
 	if err != nil {
 		log.Debug("net.Listen error", "error", fmt.Sprintf("%#v", err))
-		if oErr, ok := err.(*net.OpError); ok {
-			log.Fatal(oErr.Err.Error())
-		}
+		log.Fatal(err.Error())
 	}
 
-	output.Init(config.Path, addresses)
+	output.Init(location, addresses)
 
 	return &Servant{
 		config:    config,

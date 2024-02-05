@@ -52,13 +52,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var lastItem list.Item
 		itemCount := len(m.list.Items())
 		if itemCount > 0 {
-			lastItem = m.list.Items()[len(m.list.Items())-1]
+			lastItem = m.list.Items()[itemCount-1]
 		}
-		insCmd := m.list.InsertItem(len(m.list.Items()), msg)
+		insCmd := m.list.InsertItem(itemCount, msg)
 		statusCmd := m.list.NewStatusMessage(StatusMessageStyle("Added " + msg.Title()))
 
 		if m.list.SelectedItem() == lastItem {
-			m.list.Select(len(m.list.Items()) - 1)
+			m.list.Select(itemCount - 1)
 		}
 
 		return m, tea.Batch(insCmd, statusCmd, waitForActivity(m.channel))

@@ -26,7 +26,7 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "servant",
-	Short: "Create an HTTP server in a jiffy",
+	Short: "Create and/or expose an HTTP server from your computer",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		log.Info(fmt.Sprintf("servant %s (%s)",
 			internal.ServantInfo.Version,

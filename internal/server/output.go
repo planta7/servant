@@ -16,7 +16,7 @@ import (
 )
 
 type Output interface {
-	Init(path string, addresses []string)
+	Init(location string, addresses []string)
 	Write(request *Request)
 }
 
@@ -40,9 +40,9 @@ func (l *logOutput) Write(request *Request) {
 	log.Info(logLine)
 }
 
-func (l *logOutput) Init(path string, addresses []string) {
+func (l *logOutput) Init(location string, addresses []string) {
 	addrs := strings.Join(addresses, ", ")
-	log.Info(fmt.Sprintf("Serving %s at %s", path, addrs))
+	log.Info(fmt.Sprintf("Serving %s at %s", location, addrs))
 }
 
 type tuiOutput struct {
@@ -64,12 +64,12 @@ func (t *tuiOutput) Write(request *Request) {
 	t.model.Add(title, description)
 }
 
-func (t *tuiOutput) Init(path string, addresses []string) {
+func (t *tuiOutput) Init(location string, addresses []string) {
 	addrs := strings.Join(addresses, ", ")
 	servingInfo := fmt.Sprintf("servant %s (%s)\nServing %s at %s",
 		internal.ServantInfo.Version,
 		internal.ServantInfo.GetShortCommit(),
-		path,
+		location,
 		addrs,
 	)
 	t.model = tui.NewModel(servingInfo)

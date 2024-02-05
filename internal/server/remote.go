@@ -24,7 +24,8 @@ func (s *remote) Init(handler RequestHandler, httpHandler http.Handler) (*http.S
 	mux := http.NewServeMux()
 	mux.Handle("/", handler.Handle(httpHandler))
 	listener, err := localtunnel.Listen(localtunnel.Options{
-		Log: log.StandardLog(),
+		Subdomain: s.config.Subdomain,
+		Log:       log.StandardLog(),
 	})
 	if err != nil {
 		return nil, nil, nil, err

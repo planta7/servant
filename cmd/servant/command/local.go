@@ -42,6 +42,7 @@ func init() {
 	localCmd.Flags().StringVarP(&lConfig.Host, "host", "", "", "Server host (default is empty)")
 	localCmd.Flags().IntVarP(&lConfig.Port, "port", "p", 0, "Listen on port (default is random)")
 	localCmd.Flags().BoolVarP(&lConfig.Expose, "expose", "e", false, "Expose through localtunnel (default is false)")
+	localCmd.Flags().StringVarP(&lConfig.Subdomain, "subdomain", "s", "", "Subdomain (default is random)")
 	localCmd.Flags().BoolVarP(&lConfig.CORS, "cors", "c", false, "Enable CORS (default is false)")
 	localCmd.Flags().BoolVarP(&lConfig.Launch, "launch", "l", false, "Launch default browser (default is false)")
 	localCmd.Flags().StringVarP(&lConfig.Auth, "auth", "", "", "username:password for basic auth (default is empty)")

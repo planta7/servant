@@ -36,6 +36,7 @@ var remoteCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(remoteCmd)
+	remoteCmd.Flags().StringVarP(&rConfig.Subdomain, "subdomain", "s", "", "Subdomain (default is random)")
 	remoteCmd.Flags().IntVarP(&rConfig.Port, "port", "p", 0, "Port to expose")
 	_ = remoteCmd.MarkFlagRequired("port")
 }
