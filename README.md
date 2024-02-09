@@ -51,7 +51,7 @@
 You can download the latest release binaries available in the
 [releases section](https://github.com/planta7/servant/releases/latest) of the repository.
 
-> **Warning**
+> [!NOTE]
 > Keep in mind that if you install it manually, you will not have the ability to update automatically when there
 > is a new version of `servant`.
 
